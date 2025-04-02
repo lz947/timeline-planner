@@ -6,6 +6,7 @@ import * as React from "react";
 import { HeroUIProvider } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import TimelineNav from "@/components/TimelineNav/TimelineNav";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -23,9 +24,21 @@ declare module "@react-types/shared" {
 export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
 
+  // Header component states
+  const [editingProject, setEditingProject] = React.useState(false);
+  const [projectName, setProjectName] = React.useState('');
+
   return (
     <HeroUIProvider navigate={router.push}>
-      <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      <NextThemesProvider {...themeProps}>
+        <TimelineNav 
+          editingProject={editingProject} 
+          setEditingProject={setEditingProject}
+          projectName={projectName}
+          setProjectName={setProjectName}
+        />
+        {children}
+      </NextThemesProvider>
     </HeroUIProvider>
   );
 }

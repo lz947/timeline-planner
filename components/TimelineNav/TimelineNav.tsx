@@ -1,32 +1,96 @@
 "use client"
 
+import * as React from "react";
 import {
   Navbar, 
   NavbarProps, 
   NavbarContent, 
   NavbarItem, 
-  Link
+  Link,
+  Dropdown,
+  DropdownTrigger,
+  Button,
+  DropdownMenu,
+  DropdownItem
 } from "@heroui/react";
-
-interface TimelineNavProps extends NavbarProps {
-  editing? : boolean
-}
+import { NewProjectIcon } from '@/public/icons/NewProjectIcon';
+import { LoadProjectIcon } from '@/public/icons/LoadProjectIcon';
+import { SaveProjectIcon } from '@/public/icons/SaveProjectIcon';
 
 const TimelineNav = (
   {
-    editing,
+    editingProject,
+    setEditingProject,
+    projectName,
+    setProjectName,
     ...props
   }: {
-    editing?: boolean
-  } & TimelineNavProps
+    editingProject: boolean,
+    setEditingProject: React.Dispatch<React.SetStateAction<boolean>>,
+    projectName: string,
+    setProjectName: React.Dispatch<React.SetStateAction<string>>
+  } & NavbarProps
 ) => {
+  const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [timeoutId, setTimeoutId] = React.useState<any>(null);
+  const delay = 1000;
+
   return (
     <Navbar {...props}>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
+        <Dropdown
+          isOpen={isOpen}>
+          <DropdownTrigger>
+            <Button 
+              variant="bordered"
+              onMouseEnter={() => {
+                clearTimeout(timeoutId);
+                setIsOpen(true);
+              }}
+              onMouseLeave={() => {
+                const id = setTimeout(() => setIsOpen(false), delay);
+                setTimeoutId(id);
+              }}
+            >
+              {editingProject
+                ? projectName
+                : "No current project"
+              }
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu 
+            variant="faded"
+            onMouseEnter={() => {
+              clearTimeout(timeoutId);
+              setIsOpen(true);
+            }}
+            onMouseLeave={() => {
+              setIsOpen(false);
+            }}
+          >
+            <DropdownItem
+              key="new"
+              startContent={<NewProjectIcon className={iconClasses} />}
+            >
+              New file
+            </DropdownItem>
+            <DropdownItem
+              key="copy"
+              startContent={<LoadProjectIcon className={iconClasses} />}
+            >
+              Copy link
+            </DropdownItem>
+            <DropdownItem
+              key="edit"
+              startContent={<SaveProjectIcon className={iconClasses} />}
+            >
+              Edit file
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
         </NavbarItem>
         <NavbarItem isActive>
           <Link aria-current="page" href="#">
