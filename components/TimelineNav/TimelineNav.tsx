@@ -11,7 +11,7 @@ import {
   DropdownTrigger,
   Button,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
 } from "@heroui/react";
 import { NewProjectIcon } from '@/public/icons/NewProjectIcon';
 import { LoadProjectIcon } from '@/public/icons/LoadProjectIcon';
@@ -33,6 +33,15 @@ const TimelineNav = (
 ) => {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
+  // Project states
+
+  const createNewProject = () => {
+    setEditingProject(true);
+    setProjectName("Something");
+  }
+
+
+  // UI states
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
   const [timeoutId, setTimeoutId] = React.useState<any>(null);
   const delay = 1000;
@@ -74,20 +83,25 @@ const TimelineNav = (
               <DropdownItem
                 key="new"
                 startContent={<NewProjectIcon className={iconClasses} />}
+                // onPress={}
               >
-                New file
+                New Project
               </DropdownItem>
               <DropdownItem
-                key="copy"
+                key="open"
                 startContent={<LoadProjectIcon className={iconClasses} />}
               >
-                Copy link
+                Open Project
               </DropdownItem>
               <DropdownItem
-                key="edit"
+                key="save"
                 startContent={<SaveProjectIcon className={iconClasses} />}
+                className={editingProject
+                  ? ""
+                  : "hidden"
+                }
               >
-                Edit file
+                Save Project
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
