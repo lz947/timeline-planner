@@ -33,7 +33,7 @@ const TimelineNav = (
 ) => {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
   const [timeoutId, setTimeoutId] = React.useState<any>(null);
   const delay = 1000;
 
@@ -41,56 +41,56 @@ const TimelineNav = (
     <Navbar {...props}>
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarItem>
-        <Dropdown
-          isOpen={isOpen}>
-          <DropdownTrigger>
-            <Button 
-              variant="bordered"
+          <Dropdown
+            isOpen={isProjectDropdownOpen}>
+            <DropdownTrigger>
+              <Button 
+                variant="bordered"
+                onMouseEnter={() => {
+                  clearTimeout(timeoutId);
+                  setIsProjectDropdownOpen(true);
+                }}
+                onMouseLeave={() => {
+                  const id = setTimeout(() => setIsProjectDropdownOpen(false), delay);
+                  setTimeoutId(id);
+                }}
+              >
+                {editingProject
+                  ? projectName
+                  : "No current project"
+                }
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu 
+              variant="faded"
               onMouseEnter={() => {
                 clearTimeout(timeoutId);
-                setIsOpen(true);
+                setIsProjectDropdownOpen(true);
               }}
               onMouseLeave={() => {
-                const id = setTimeout(() => setIsOpen(false), delay);
-                setTimeoutId(id);
+                setIsProjectDropdownOpen(false);
               }}
             >
-              {editingProject
-                ? projectName
-                : "No current project"
-              }
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu 
-            variant="faded"
-            onMouseEnter={() => {
-              clearTimeout(timeoutId);
-              setIsOpen(true);
-            }}
-            onMouseLeave={() => {
-              setIsOpen(false);
-            }}
-          >
-            <DropdownItem
-              key="new"
-              startContent={<NewProjectIcon className={iconClasses} />}
-            >
-              New file
-            </DropdownItem>
-            <DropdownItem
-              key="copy"
-              startContent={<LoadProjectIcon className={iconClasses} />}
-            >
-              Copy link
-            </DropdownItem>
-            <DropdownItem
-              key="edit"
-              startContent={<SaveProjectIcon className={iconClasses} />}
-            >
-              Edit file
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+              <DropdownItem
+                key="new"
+                startContent={<NewProjectIcon className={iconClasses} />}
+              >
+                New file
+              </DropdownItem>
+              <DropdownItem
+                key="copy"
+                startContent={<LoadProjectIcon className={iconClasses} />}
+              >
+                Copy link
+              </DropdownItem>
+              <DropdownItem
+                key="edit"
+                startContent={<SaveProjectIcon className={iconClasses} />}
+              >
+                Edit file
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
         <NavbarItem isActive>
           <Link aria-current="page" href="#">
