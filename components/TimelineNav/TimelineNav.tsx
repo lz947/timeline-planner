@@ -24,35 +24,38 @@ import { NewProjectIcon } from '@/public/icons/NewProjectIcon';
 import { LoadProjectIcon } from '@/public/icons/LoadProjectIcon';
 import { SaveProjectIcon } from '@/public/icons/SaveProjectIcon';
 
+import { useProjectState } from "@/utils/ProjectState";
+
 const TimelineNav = (
   {
-    projectData,
-    setProjectData,
     editingProject,
     setEditingProject,
     ...props
   }: {
-    projectData: Object,
-    setProjectData: React.Dispatch<React.SetStateAction<Object>>,
     editingProject: boolean,
     setEditingProject: React.Dispatch<React.SetStateAction<boolean>>,
   } & NavbarProps
 ) => {
+  // UI
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
-  
+  // States
+  // Global state
+  const { 
+    projectState, setProjectState,
+    setProjectName, addEntity, editEntity, deleteEntity 
+  } = useProjectState();
 
-
-  // Nav UI states
+  // Nav Projects UI state 
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
   const [timeoutId, setTimeoutId] = React.useState<any>(null);
   const delay = 1000;
 
-  // New Project UI states
+  // New Project Medal UI states
   const [isNewProjectMedalOpen, setIsNewProjectMedalOpen] = React.useState(false);
 
 
-  // Project states
+  // Functions
 
   const createNewProject = () => {
     // Prepare Data
@@ -86,7 +89,7 @@ const TimelineNav = (
                 }}
               >
                 {editingProject
-                  ? "New Project"
+                  ? projectState.projectName
                   : "No current project"
                 }
               </Button>
@@ -129,12 +132,12 @@ const TimelineNav = (
         </NavbarItem>
         <NavbarItem isActive>
           <Link aria-current="page" href="#">
-            Customers
+            Entities
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="#">
-            Integrations
+            Events
           </Link>
         </NavbarItem>
       </NavbarContent>

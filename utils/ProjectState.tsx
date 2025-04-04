@@ -8,13 +8,14 @@ interface Entity {
 }
 
 interface projectState {
-  projectProjectName: string;
+  projectName: string;
   entities: Record<string, Entity>;
 }
 
 interface ProjectStateContextType {
-  state: projectState;
-  setProjectName: (newProjectProjectName: string) => void;
+  projectState: projectState;
+  setProjectState: (newProjectState:projectState) => void;
+  setProjectName: (newprojectName: string) => void;
   addEntity: (id: string, newEntity: Entity) => void;
   editEntity: (id: string, newEntity: Entity) => void;
   deleteEntity: (id: string) => void;
@@ -25,21 +26,21 @@ const StateContext = createContext<ProjectStateContextType | undefined>(undefine
 
 // Provider component
 export const StateProvider = ({ children } : { children:any }) => {
-  const [state, setState] = useState<projectState>({
-    projectProjectName: "MyApp",
+  const [projectState, setProjectState] = useState<projectState>({
+    projectName: "New Project",
     entities: {},
   });
 
-  const setProjectName = (newProjectProjectName: string) => {
-    setState((prevState) => ({
+  const setProjectName = (newprojectName: string) => {
+    setProjectState((prevState) => ({
       ...prevState,
-      projectProjectName: newProjectProjectName,
+      projectName: newprojectName,
     }));
   };
 
   // Add a new user
   const addEntity = (id: string, newEntity: Entity) => {
-    setState((prevState) => ({
+    setProjectState((prevState) => ({
       ...prevState,
       entities: {
         ...prevState.entities,
@@ -50,7 +51,7 @@ export const StateProvider = ({ children } : { children:any }) => {
 
   // Edit a user
   const editEntity = (id: string, newEntity: Entity) => {
-    setState((prevState) => ({
+    setProjectState((prevState) => ({
       ...prevState,
       entities: {
         ...prevState.entities,
@@ -61,7 +62,7 @@ export const StateProvider = ({ children } : { children:any }) => {
 
   // Delete a user
   const deleteEntity = (id: string) => {
-    setState((prevState) => {
+    setProjectState((prevState) => {
       const newEntities = { ...prevState.entities };
       delete newEntities[id];
 
@@ -72,7 +73,7 @@ export const StateProvider = ({ children } : { children:any }) => {
   return (
     <StateContext.Provider 
       value={{ 
-        state, setProjectName, 
+        projectState, setProjectState, setProjectName, 
         addEntity, editEntity, deleteEntity  
       }}
     >
