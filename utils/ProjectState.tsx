@@ -82,10 +82,10 @@ export const StateProvider = ({ children } : { children:any }) => {
 };
 
 // Custom hook to use the state
-export const useProjectpState = (): ProjectStateContextType => {
+export const useProjectState = (): ProjectStateContextType => {
   const context = useContext(StateContext);
   if (!context) {
-    throw new Error("useProjectpState must be used within a StateProvider");
+    throw new Error("useProjectState must be used within a StateProvider");
   }
   return context;
 };
