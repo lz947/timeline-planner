@@ -12,6 +12,13 @@ import {
   Button,
   DropdownMenu,
   DropdownItem,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Input,
 } from "@heroui/react";
 import { NewProjectIcon } from '@/public/icons/NewProjectIcon';
 import { LoadProjectIcon } from '@/public/icons/LoadProjectIcon';
@@ -19,32 +26,45 @@ import { SaveProjectIcon } from '@/public/icons/SaveProjectIcon';
 
 const TimelineNav = (
   {
+    projectData,
+    setProjectData,
     editingProject,
     setEditingProject,
-    projectName,
-    setProjectName,
     ...props
   }: {
+    projectData: Object,
+    setProjectData: React.Dispatch<React.SetStateAction<Object>>,
     editingProject: boolean,
     setEditingProject: React.Dispatch<React.SetStateAction<boolean>>,
-    projectName: string,
-    setProjectName: React.Dispatch<React.SetStateAction<string>>
   } & NavbarProps
 ) => {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
-  // Project states
-
-  const createNewProject = () => {
-    setEditingProject(true);
-    setProjectName("Something");
-  }
+  
 
 
-  // UI states
+  // Nav UI states
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
   const [timeoutId, setTimeoutId] = React.useState<any>(null);
   const delay = 1000;
+
+  // New Project UI states
+  const [isNewProjectMedalOpen, setIsNewProjectMedalOpen] = React.useState(false);
+
+
+  // Project states
+
+  const createNewProject = () => {
+    // Prepare Data
+
+    setEditingProject(true);
+    // Get the name from input
+    // TODO: Update here
+    // setProjectName("Something");
+
+    // Close the modale
+    setIsNewProjectMedalOpen(false)
+  }
 
   return (
     <Navbar {...props}>
@@ -54,6 +74,7 @@ const TimelineNav = (
             isOpen={isProjectDropdownOpen}>
             <DropdownTrigger>
               <Button 
+                className="min-w-44 max-w-44"
                 variant="bordered"
                 onMouseEnter={() => {
                   clearTimeout(timeoutId);
@@ -65,7 +86,7 @@ const TimelineNav = (
                 }}
               >
                 {editingProject
-                  ? projectName
+                  ? "New Project"
                   : "No current project"
                 }
               </Button>
@@ -83,7 +104,7 @@ const TimelineNav = (
               <DropdownItem
                 key="new"
                 startContent={<NewProjectIcon className={iconClasses} />}
-                // onPress={}
+                onPress={()=>{setIsNewProjectMedalOpen(true)}}
               >
                 New Project
               </DropdownItem>
@@ -117,6 +138,28 @@ const TimelineNav = (
           </Link>
         </NavbarItem>
       </NavbarContent>
+      {/* New Project Modal */}
+      <Modal isOpen={isNewProjectMedalOpen}>
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">New Project</ModalHeader>
+          <ModalBody>
+            <Input 
+              label="Project Name" 
+              defaultValue="New Project"
+              type="text" 
+              variant="underlined" 
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" variant="light" onPress={()=>{setIsNewProjectMedalOpen(false)}}>
+              Close
+            </Button>
+            <Button color="primary" onPress={createNewProject}>
+              Create
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Navbar>
   );
 }

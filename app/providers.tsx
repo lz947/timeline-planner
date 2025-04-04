@@ -23,6 +23,8 @@ declare module "@react-types/shared" {
 
 export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
+  // Global Project Data
+  const [projectData, setProjectData] = React.useState({});
 
   // Header component states
   const [editingProject, setEditingProject] = React.useState(false);
@@ -32,10 +34,10 @@ export function Providers({ children, themeProps }: ProvidersProps) {
     <HeroUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
         <TimelineNav 
+          projectData={projectData}
+          setProjectData={setProjectData}
           editingProject={editingProject} 
           setEditingProject={setEditingProject}
-          projectName={projectName}
-          setProjectName={setProjectName}
         />
         {children}
       </NextThemesProvider>
