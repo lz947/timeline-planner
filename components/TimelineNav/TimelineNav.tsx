@@ -12,7 +12,6 @@ import {
   Button,
   DropdownMenu,
   DropdownItem,
-  useDisclosure,
   Modal,
   ModalContent,
   ModalHeader,
@@ -43,30 +42,30 @@ const TimelineNav = (
   // Global state
   const { 
     projectState, setProjectState,
-    setProjectName, addEntity, editEntity, deleteEntity 
+    setProjectName, setProjectEntity,
+    addEntity, editEntity, deleteEntity 
   } = useProjectState();
 
-  // Nav Projects UI state 
+  // Nav Projects state 
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
   const [timeoutId, setTimeoutId] = React.useState<any>(null);
   const delay = 1000;
 
-  // New Project Medal UI states
+  // New Project Medal states
   const [isNewProjectMedalOpen, setIsNewProjectMedalOpen] = React.useState(false);
-
+  const [newProjectInput, setNewProjectInput] = React.useState("New Project");
 
   // Functions
 
   const createNewProject = () => {
     // Prepare Data
-
+    // Use the name from input as the project name
+    setProjectName(newProjectInput);
+    setProjectEntity({});
+    // Enable editing mode
     setEditingProject(true);
-    // Get the name from input
-    // TODO: Update here
-    // setProjectName("Something");
-
     // Close the modale
-    setIsNewProjectMedalOpen(false)
+    setIsNewProjectMedalOpen(false);
   }
 
   return (
@@ -130,13 +129,21 @@ const TimelineNav = (
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current="page" href="#">
+        <NavbarItem>
+          <Link 
+            color="foreground"
+            href="/entities"
+            isDisabled={!editingProject}
+          >
             Entities
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link 
+            color="foreground"
+            href="/events"
+            isDisabled={!editingProject}
+          >
             Events
           </Link>
         </NavbarItem>
@@ -146,11 +153,12 @@ const TimelineNav = (
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">New Project</ModalHeader>
           <ModalBody>
-            <Input 
-              label="Project Name" 
-              defaultValue="New Project"
-              type="text" 
-              variant="underlined" 
+            <Input
+              label="Project Name"
+              type="text"
+              variant="underlined"
+              value={newProjectInput}
+              onChange={(e)=>{setNewProjectInput(e.target.value)}}
             />
           </ModalBody>
           <ModalFooter>
