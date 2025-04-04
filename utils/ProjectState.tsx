@@ -14,8 +14,9 @@ interface projectState {
 
 interface ProjectStateContextType {
   projectState: projectState;
-  setProjectState: (newProjectState:projectState) => void;
-  setProjectName: (newprojectName: string) => void;
+  setProjectState: (newProjectState: projectState) => void;
+  setProjectName: (newProjectName: string) => void;
+  setProjectEntity: (newProjectEntity: Record<string, Entity>) => void;
   addEntity: (id: string, newEntity: Entity) => void;
   editEntity: (id: string, newEntity: Entity) => void;
   deleteEntity: (id: string) => void;
@@ -31,14 +32,20 @@ export const StateProvider = ({ children } : { children:any }) => {
     entities: {},
   });
 
-  const setProjectName = (newprojectName: string) => {
+  const setProjectName = (newProjectName: string) => {
     setProjectState((prevState) => ({
       ...prevState,
-      projectName: newprojectName,
+      projectName: newProjectName,
     }));
   };
 
-  // Add a new user
+  const setProjectEntity = (newProjectEntity: Record<string, Entity>) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      entities: newProjectEntity,
+    }));
+  };
+
   const addEntity = (id: string, newEntity: Entity) => {
     setProjectState((prevState) => ({
       ...prevState,
@@ -49,7 +56,6 @@ export const StateProvider = ({ children } : { children:any }) => {
     }));
   };
 
-  // Edit a user
   const editEntity = (id: string, newEntity: Entity) => {
     setProjectState((prevState) => ({
       ...prevState,
@@ -60,7 +66,6 @@ export const StateProvider = ({ children } : { children:any }) => {
     }));
   };
 
-  // Delete a user
   const deleteEntity = (id: string) => {
     setProjectState((prevState) => {
       const newEntities = { ...prevState.entities };
@@ -73,7 +78,8 @@ export const StateProvider = ({ children } : { children:any }) => {
   return (
     <StateContext.Provider 
       value={{ 
-        projectState, setProjectState, setProjectName, 
+        projectState, setProjectState,
+        setProjectName, setProjectEntity,
         addEntity, editEntity, deleteEntity  
       }}
     >
