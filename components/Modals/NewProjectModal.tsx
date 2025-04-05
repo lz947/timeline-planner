@@ -9,14 +9,15 @@ import {
   ModalContent, 
   ModalFooter, 
   ModalHeader, 
-  ModalProps
+  ModalProps,
+  Textarea
 } from "@heroui/react";
 import { useProjectState } from "@/utils/ProjectState";
 
 const NewProjectModal = ( props:  ModalProps ) => {
   // States
   const { setProjectName, setEditingMode } = useProjectState();
-
+  const [projectNameInvalid, setProjectNameInvalid] = React.useState(false);
   const [newProjectInput, setNewProjectInput] = React.useState("New Project");
 
   // Functions
@@ -27,6 +28,15 @@ const NewProjectModal = ( props:  ModalProps ) => {
     // Enable editing mode
     setEditingMode(true);
     // Use everything in default
+  }
+
+  const onProjectNameInputChange = (e: any) => {
+    setNewProjectInput(e.target.value);
+    if (e.target.value == "") {
+      setProjectNameInvalid(true);
+    } else {
+      setProjectNameInvalid(false);
+    }
   }
 
   return (
@@ -41,14 +51,21 @@ const NewProjectModal = ( props:  ModalProps ) => {
                 type="text"
                 variant="underlined"
                 value={newProjectInput}
-                onChange={(e)=>{setNewProjectInput(e.target.value)}}
+                onChange={onProjectNameInputChange}
+                isInvalid={projectNameInvalid}
+                errorMessage="Please enter a project name"
               />
+              <p className="text-small text-default-400">You may lose the current project by creating a new project.</p>
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button color="primary" onPress={()=>{createNewProject();onClose();}}>
+              <Button 
+                color="primary" 
+                isDisabled={projectNameInvalid}
+                onPress={()=>{createNewProject();onClose();}}
+              >
                 Create
               </Button>
             </ModalFooter>
