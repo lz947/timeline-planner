@@ -3,23 +3,34 @@ import { createContext, useContext, useState, ReactNode } from "react";
 //entities
 // {id: {id:xxx, name:xxx...}}
 interface Entity {
-  id: string;
+  id: number;
   name: string;
+  entityType: EntityType;
+  entityTypeValues: [];
 }
 
-interface projectState {
+//entity type: a custom set of keys that needed in the entity
+interface EntityType {
+  id: number;
+  keys: [];
+}
+
+interface ProjectState {
   projectName: string;
-  entities: Record<string, Entity>;
+  entityTrackingId: number;
+  entities: Record<number, Entity>;
+  entityTypeTrackingId: number;
+  entityTypes: Record<number, Entity>;
 }
 
 interface ProjectStateContextType {
-  projectState: projectState;
-  setProjectState: (newProjectState: projectState) => void;
+  projectState: ProjectState;
+  setProjectState: (newProjectState: ProjectState) => void;
   setProjectName: (newProjectName: string) => void;
-  setProjectEntity: (newProjectEntity: Record<string, Entity>) => void;
-  addEntity: (id: string, newEntity: Entity) => void;
-  editEntity: (id: string, newEntity: Entity) => void;
-  deleteEntity: (id: string) => void;
+  setProjectEntity: (newProjectEntity: Record<number, Entity>) => void;
+  addEntity: (newEntity: Entity) => void;
+  editEntity: (id: number, newEntity: Entity) => void;
+  deleteEntity: (id: number) => void;
 }
 
 // Define the context
@@ -27,9 +38,12 @@ const StateContext = createContext<ProjectStateContextType | undefined>(undefine
 
 // Provider component
 export const StateProvider = ({ children } : { children:any }) => {
-  const [projectState, setProjectState] = useState<projectState>({
+  const [projectState, setProjectState] = useState<ProjectState>({
     projectName: "New Project",
+    entityTrackingId: 0,
     entities: {},
+    entityTypeTrackingId: 0,
+    entityTypes: {},
   });
 
   const setProjectName = (newProjectName: string) => {
@@ -39,14 +53,25 @@ export const StateProvider = ({ children } : { children:any }) => {
     }));
   };
 
-  const setProjectEntity = (newProjectEntity: Record<string, Entity>) => {
+  const setProjectEntity = (newProjectEntity: Record<number, Entity>) => {
     setProjectState((prevState) => ({
       ...prevState,
       entities: newProjectEntity,
     }));
   };
 
-  const addEntity = (id: string, newEntity: Entity) => {
+  const addEntity = (newEntity: Entity) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      entityTrackingId: prevState.entityTrackingId + 1,
+      entities: {
+        ...prevState.entities,
+        [prevState.entityTrackingId]: newEntity,
+      },
+    }));
+  };
+
+  const editEntity = (id: number, newEntity: Entity) => {
     setProjectState((prevState) => ({
       ...prevState,
       entities: {
@@ -56,17 +81,7 @@ export const StateProvider = ({ children } : { children:any }) => {
     }));
   };
 
-  const editEntity = (id: string, newEntity: Entity) => {
-    setProjectState((prevState) => ({
-      ...prevState,
-      entities: {
-        ...prevState.entities,
-        [id]: newEntity,
-      },
-    }));
-  };
-
-  const deleteEntity = (id: string) => {
+  const deleteEntity = (id: number) => {
     setProjectState((prevState) => {
       const newEntities = { ...prevState.entities };
       delete newEntities[id];
