@@ -1,0 +1,18 @@
+{
+  "TimelineNav": {
+    "noProject": "没有项目",
+    "newProject": "新建项目",
+    "openProject": "打开项目",
+    "saveProject": "保存项目",
+    "entityPageLink": "实体",
+    "eventPageLink": "事件"
+  },
+  "NewProjectModal": {
+    "header": "新建项目",
+    "inputLabel": "项目名称",
+    "inputError": "项目名称不可为空",
+    "newProjectWarning": "新建项目可能会导致当前未保存的项目丢失.",
+    "closeButton": "关闭",
+    "createButton": "创建"
+  }
+}
