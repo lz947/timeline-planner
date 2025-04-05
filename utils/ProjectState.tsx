@@ -17,6 +17,7 @@ interface EntityType {
 
 interface ProjectState {
   projectName: string;
+  editingMode: boolean;
   entityTrackingId: number;
   entities: Record<number, Entity>;
   entityTypeTrackingId: number;
@@ -26,6 +27,7 @@ interface ProjectState {
 interface ProjectStateContextType {
   projectState: ProjectState;
   setProjectState: (newProjectState: ProjectState) => void;
+  setEditingMode: (newEditingMode: boolean) => void;
   setProjectName: (newProjectName: string) => void;
   setProjectEntity: (newProjectEntity: Record<number, Entity>) => void;
   addEntity: (newEntity: Entity) => void;
@@ -40,6 +42,7 @@ const StateContext = createContext<ProjectStateContextType | undefined>(undefine
 export const StateProvider = ({ children } : { children:any }) => {
   const [projectState, setProjectState] = useState<ProjectState>({
     projectName: "New Project",
+    editingMode: false,
     entityTrackingId: 0,
     entities: {},
     entityTypeTrackingId: 0,
@@ -50,6 +53,13 @@ export const StateProvider = ({ children } : { children:any }) => {
     setProjectState((prevState) => ({
       ...prevState,
       projectName: newProjectName,
+    }));
+  };
+
+  const setEditingMode = (newEditingMode: boolean) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      editingMode: newEditingMode,
     }));
   };
 
@@ -94,8 +104,8 @@ export const StateProvider = ({ children } : { children:any }) => {
     <StateContext.Provider 
       value={{ 
         projectState, setProjectState,
-        setProjectName, setProjectEntity,
-        addEntity, editEntity, deleteEntity  
+        setProjectName, setEditingMode,
+        setProjectEntity, addEntity, editEntity, deleteEntity  
       }}
     >
       {children}
