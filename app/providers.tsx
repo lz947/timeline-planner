@@ -24,17 +24,12 @@ declare module "@react-types/shared" {
 
 export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
-  // Header component states
-  const [editingProject, setEditingProject] = React.useState(false);
 
   return (
     <HeroUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
         <StateProvider>
-          <TimelineNav 
-            editingProject={editingProject} 
-            setEditingProject={setEditingProject}
-          />
+          <TimelineNav/>
           {children}
         </StateProvider>
       </NextThemesProvider>
