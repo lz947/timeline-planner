@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react";
-import {useTranslations} from 'next-intl';
+import {useLocale, useTranslations} from "next-intl";
 import {
   Navbar, 
   NavbarProps, 
@@ -14,34 +14,49 @@ import {
   DropdownMenu,
   DropdownItem,
   useDisclosure,
+  Selection
 } from "@heroui/react";
-import { NewProjectIcon } from '@/public/icons/NewProjectIcon';
-import { LoadProjectIcon } from '@/public/icons/LoadProjectIcon';
-import { SaveProjectIcon } from '@/public/icons/SaveProjectIcon';
+import { NewProjectIcon } from "@/public/icons/NewProjectIcon";
+import { LoadProjectIcon } from "@/public/icons/LoadProjectIcon";
+import { SaveProjectIcon } from "@/public/icons/SaveProjectIcon";
+import { LanguageIcon } from "@/public/icons/LanguageIcon";
 import { useProjectState } from "@/utils/ProjectState";
 import NewProjectModal from "../Modals/NewProjectModal";
+import { locales, localNames } from "@/i18n/config";
+import { setUserLocale } from "@/utils/local";
 
 const TimelineNav = ( props: NavbarProps ) => {
+  // Locals
+  const t = useTranslations("TimelineNav");
+  const currentLocale = useLocale();
+
   // UI
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
+  const [timeoutId, setTimeoutId] = React.useState<any>(null);
+  const delay = 1000;
 
   // States
   // Global state
   const { projectState } = useProjectState();
-
   // Nav Projects state 
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
-  const [timeoutId, setTimeoutId] = React.useState<any>(null);
-  const delay = 1000;
+
+  // Locale states
+  const [isLocalDropdownOpen, setIsLocalDropdownOpen] = React.useState(false);
+  const [selectedLocal, setSelectedLocal] = React.useState<Selection>(new Set([currentLocale]));
 
   // New Project Modal
   const { 
     isOpen: isNewProjectModalOpen, 
     onOpen: onNewProjectModalOpen, 
     onClose: onNewProjectModalClose 
-  } = useDisclosure()
+  } = useDisclosure();
 
-  const t = useTranslations("TimelineNav");
+  const switchLanguage = (selectedLocalSet: any) => {
+    setSelectedLocal(selectedLocalSet);
+    const selectedLocal = [...selectedLocalSet][0];
+    setUserLocale(selectedLocal);
+  };
 
   return (
     <Navbar {...props}>
@@ -121,6 +136,48 @@ const TimelineNav = ( props: NavbarProps ) => {
           >
             {t("eventPageLink")}
           </Link>
+        </NavbarItem>
+      </NavbarContent>
+      {/* Locale switch */}
+      <NavbarContent justify="end">
+        <NavbarItem>
+          <Dropdown
+            isOpen={isLocalDropdownOpen}>
+            <DropdownTrigger>
+              <LanguageIcon
+                color="ffffff"
+                width={36}
+                height={36}
+                onMouseEnter={() => {
+                  clearTimeout(timeoutId);
+                  setIsLocalDropdownOpen(true);
+                }}
+                onMouseLeave={() => {
+                  const id = setTimeout(() => setIsLocalDropdownOpen(false), delay);
+                  setTimeoutId(id);
+                }}
+              />
+            </DropdownTrigger>
+            <DropdownMenu 
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selectedLocal}
+              onSelectionChange={switchLanguage}
+              onMouseEnter={() => {
+                clearTimeout(timeoutId);
+                setIsLocalDropdownOpen(true);
+              }}
+              onMouseLeave={() => {
+                setIsLocalDropdownOpen(false);
+              }}
+            >
+              {locales.map((local)=>(
+                <DropdownItem 
+                  key={local}
+                >{localNames[local]}</DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
       </NavbarContent>
       {/* New Project Modal */}

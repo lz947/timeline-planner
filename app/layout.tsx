@@ -2,8 +2,8 @@ import "@/styles/globals.css";
 import { Metadata } from "next";
 import clsx from "clsx";
 
-import {NextIntlClientProvider} from 'next-intl';
-import {getLocale} from 'next-intl/server';
+import {NextIntlClientProvider} from "next-intl";
+import {getLocale} from "next-intl/server";
 
 import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";

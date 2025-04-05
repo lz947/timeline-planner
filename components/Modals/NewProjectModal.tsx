@@ -28,7 +28,7 @@ const NewProjectModal = ( props:  ModalProps ) => {
     // Enable editing mode
     setEditingMode(true);
     // Use everything in default
-  }
+  };
 
   const onProjectNameInputChange = (e: any) => {
     setNewProjectInput(e.target.value);
@@ -37,7 +37,7 @@ const NewProjectModal = ( props:  ModalProps ) => {
     } else {
       setProjectNameInvalid(false);
     }
-  }
+  };
 
   const t = useTranslations("NewProjectModal");
 
