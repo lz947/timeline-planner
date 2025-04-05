@@ -6,7 +6,7 @@ import * as React from "react";
 import { HeroUIProvider } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { StateProvider, useProjectState } from "@/utils/ProjectState";
+import { StateProvider } from "@/utils/ProjectState";
 import TimelineNav from "@/components/TimelineNav/TimelineNav";
 
 export interface ProvidersProps {

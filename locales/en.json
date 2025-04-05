@@ -1,0 +1,18 @@
+{
+  "TimelineNav": {
+    "noProject": "No current project",
+    "newProject": "New Project",
+    "openProject": "Open Project",
+    "saveProject": "Save Project",
+    "entityPageLink": "Entities",
+    "eventPageLink": "Events"
+  },
+  "NewProjectModal": {
+    "header": "New Project",
+    "inputLabel": "Project Name",
+    "inputError": "Please enter a project name",
+    "newProjectWarning": "You may lose the current project by creating a new project.",
+    "closeButton": "Close",
+    "createButton": "Create"
+  }
+}

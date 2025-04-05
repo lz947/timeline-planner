@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react";
+import {useTranslations} from 'next-intl';
 import {
   Navbar, 
   NavbarProps, 
@@ -17,7 +18,6 @@ import {
 import { NewProjectIcon } from '@/public/icons/NewProjectIcon';
 import { LoadProjectIcon } from '@/public/icons/LoadProjectIcon';
 import { SaveProjectIcon } from '@/public/icons/SaveProjectIcon';
-
 import { useProjectState } from "@/utils/ProjectState";
 import NewProjectModal from "../Modals/NewProjectModal";
 
@@ -41,6 +41,8 @@ const TimelineNav = ( props: NavbarProps ) => {
     onClose: onNewProjectModalClose 
   } = useDisclosure()
 
+  const t = useTranslations("TimelineNav");
+
   return (
     <Navbar {...props}>
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
@@ -62,7 +64,7 @@ const TimelineNav = ( props: NavbarProps ) => {
               >
                 {projectState.editingMode
                   ? projectState.projectName
-                  : "No current project"
+                  : t("noProject")
                 }
               </Button>
             </DropdownTrigger>
@@ -81,13 +83,13 @@ const TimelineNav = ( props: NavbarProps ) => {
                 startContent={<NewProjectIcon className={iconClasses} />}
                 onPress={onNewProjectModalOpen}
               >
-                New Project
+                {t("newProject")}
               </DropdownItem>
               <DropdownItem
                 key="open"
                 startContent={<LoadProjectIcon className={iconClasses} />}
               >
-                Open Project
+                {t("openProject")}
               </DropdownItem>
               <DropdownItem
                 key="save"
@@ -97,7 +99,7 @@ const TimelineNav = ( props: NavbarProps ) => {
                   : "hidden"
                 }
               >
-                Save Project
+                {t("saveProject")}
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -108,7 +110,7 @@ const TimelineNav = ( props: NavbarProps ) => {
             href="/entities"
             isDisabled={!projectState.editingMode}
           >
-            Entities
+            {t("entityPageLink")}
           </Link>
         </NavbarItem>
         <NavbarItem>
@@ -117,7 +119,7 @@ const TimelineNav = ( props: NavbarProps ) => {
             href="/events"
             isDisabled={!projectState.editingMode}
           >
-            Events
+            {t("eventPageLink")}
           </Link>
         </NavbarItem>
       </NavbarContent>
