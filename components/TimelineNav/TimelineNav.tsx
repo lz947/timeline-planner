@@ -75,6 +75,20 @@ const TimelineNav = ( props: NavbarProps ) => {
     setUserLocale(selectedLocal);
   };
 
+  // Save project
+  const saveProjectAsJson = () => {
+    const jsonStr = JSON.stringify(projectState, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = projectState.projectName;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Navbar {...props}>
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
@@ -139,6 +153,7 @@ const TimelineNav = ( props: NavbarProps ) => {
               <DropdownItem
                 key="save"
                 startContent={<SaveProjectIcon className={iconClasses} />}
+                onPress={saveProjectAsJson}
                 className={projectState.editingMode
                   ? ""
                   : "hidden"
