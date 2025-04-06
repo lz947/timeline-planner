@@ -8,6 +8,7 @@
     "eventPageLink": "事件"
   },
   "NewProjectModal": {
+    "defaultProjectName": "新项目",
     "header": "新建项目",
     "inputLabel": "项目名称",
     "inputError": "项目名称不可为空",

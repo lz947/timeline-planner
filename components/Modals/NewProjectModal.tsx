@@ -15,10 +15,11 @@ import {
 import { ProjectState, useProjectState } from "@/utils/ProjectState";
 
 const NewProjectModal = ( props:  ModalProps ) => {
+  const t = useTranslations("NewProjectModal");
   // States
   const { setProjectState } = useProjectState();
   const [projectNameInvalid, setProjectNameInvalid] = React.useState(false);
-  const [newProjectInput, setNewProjectInput] = React.useState("New Project");
+  const [newProjectInput, setNewProjectInput] = React.useState(t("defaultProjectName"));
 
   // Functions
   const createNewProject = () => {
@@ -43,8 +44,6 @@ const NewProjectModal = ( props:  ModalProps ) => {
       setProjectNameInvalid(false);
     }
   };
-
-  const t = useTranslations("NewProjectModal");
 
   return (
     <Modal {...props}>

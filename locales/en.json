@@ -8,6 +8,7 @@
     "eventPageLink": "Events"
   },
   "NewProjectModal": {
+    "defaultProjectName": "New Project",
     "header": "New Project",
     "inputLabel": "Project Name",
     "inputError": "Please enter a project name",
