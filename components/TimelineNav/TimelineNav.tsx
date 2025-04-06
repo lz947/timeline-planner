@@ -27,6 +27,8 @@ import { setUserLocale } from "@/utils/locale";
 import { RenameProjectIcon } from "@/public/icons/RenameProjectIcon";
 import RenameProjectModal from "../Modals/RenameProjectModal";
 import { useRouter } from "next/navigation";
+import LoadProjectModal from "../Modals/OpenProjectModal";
+import OpenProjectModal from "../Modals/OpenProjectModal";
 
 const TimelineNav = ( props: NavbarProps ) => {
   const router = useRouter();
@@ -55,6 +57,13 @@ const TimelineNav = ( props: NavbarProps ) => {
     isOpen: isNewProjectModalOpen, 
     onOpen: onNewProjectModalOpen, 
     onClose: onNewProjectModalClose 
+  } = useDisclosure();
+
+  //Load project modal
+  const { 
+    isOpen: isOpenProjectModalOpen, 
+    onOpen: onOpenProjectModalOpen, 
+    onClose: onOpenProjectModalClose 
   } = useDisclosure();
 
   // Rename project modal
@@ -136,6 +145,7 @@ const TimelineNav = ( props: NavbarProps ) => {
               <DropdownItem
                 key="open"
                 startContent={<LoadProjectIcon className={iconClasses} />}
+                onPress={onOpenProjectModalOpen}
               >
                 {t("openProject")}
               </DropdownItem>
@@ -229,6 +239,9 @@ const TimelineNav = ( props: NavbarProps ) => {
       <NewProjectModal isOpen={isNewProjectModalOpen} onOpenChange={onNewProjectModalClose}>
         <></>
       </NewProjectModal>
+      <OpenProjectModal isOpen={isOpenProjectModalOpen} onOpenChange={onOpenProjectModalClose}>
+        <></>
+      </OpenProjectModal>
       <RenameProjectModal isOpen={isRenameProjectModalOpen} onOpenChange={onRenameProjectModalClose}>
         <></>
       </RenameProjectModal>

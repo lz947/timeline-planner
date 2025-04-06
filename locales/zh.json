@@ -17,6 +17,13 @@
     "closeButton": "关闭",
     "createButton": "创建"
   },
+  "OpenProjectModal": {
+    "header": "打开项目",
+    "inputLabel": "选择一个项目",
+    "inputError": "项目文件错误",
+    "closeButton": "关闭",
+    "openButton": "选择"
+  },
   "RenameProjectModal": {
     "header": "重命名项目",
     "inputLabel": "项目名称",

@@ -17,6 +17,13 @@
     "closeButton": "Close",
     "createButton": "Create"
   },
+  "OpenProjectModal": {
+    "header": "Open Project",
+    "inputLabel": "Choose a project",
+    "inputError": "Invalid Project File",
+    "closeButton": "Close",
+    "openButton": "Open"
+  },
   "RenameProjectModal": {
     "header": "Rename Project",
     "inputLabel": "Project Name",
