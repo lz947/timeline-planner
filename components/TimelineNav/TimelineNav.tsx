@@ -23,7 +23,7 @@ import { LanguageIcon } from "@/public/icons/LanguageIcon";
 import { useProjectState } from "@/utils/ProjectState";
 import NewProjectModal from "../Modals/NewProjectModal";
 import { locales, localNames } from "@/i18n/config";
-import { setUserLocale } from "@/utils/local";
+import { setUserLocale } from "@/utils/locale";
 
 const TimelineNav = ( props: NavbarProps ) => {
   // Locals
