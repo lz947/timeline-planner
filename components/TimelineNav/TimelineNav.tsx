@@ -27,7 +27,6 @@ import { setUserLocale } from "@/utils/locale";
 import { RenameProjectIcon } from "@/public/icons/RenameProjectIcon";
 import RenameProjectModal from "../Modals/RenameProjectModal";
 import { useRouter } from "next/navigation";
-import LoadProjectModal from "../Modals/OpenProjectModal";
 import OpenProjectModal from "../Modals/OpenProjectModal";
 
 const TimelineNav = ( props: NavbarProps ) => {
@@ -73,11 +72,6 @@ const TimelineNav = ( props: NavbarProps ) => {
     onClose: onRenameProjectModalClose 
   } = useDisclosure();
 
-  const routerToMainPage = () => {
-    console.log("Hello?")
-    router.push("/");
-  };
-
   const switchLanguage = (selectedLocalSet: any) => {
     setSelectedLocal(selectedLocalSet);
     const selectedLocal = [...selectedLocalSet][0];
@@ -117,7 +111,7 @@ const TimelineNav = ( props: NavbarProps ) => {
                   setProjectDropdownTimeoutId(id);
                 }}
                 // Use onClick here as onPress will be overwrite by DropdownTrigger
-                onClick={routerToMainPage}
+                onClick={()=>{router.push("/")}}
               >
                 {projectState.editingMode
                   ? projectState.projectName
@@ -188,7 +182,7 @@ const TimelineNav = ( props: NavbarProps ) => {
             color="foreground"
             href="/chapters"
             isDisabled={!projectState.editingMode}
-          >
+          >                                 
             {t("chapterPageLink")}
           </Link>
         </NavbarItem>
