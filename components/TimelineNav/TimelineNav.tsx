@@ -24,6 +24,7 @@ import { useProjectState } from "@/utils/ProjectState";
 import NewProjectModal from "../Modals/NewProjectModal";
 import { locales, localNames } from "@/i18n/config";
 import { setUserLocale } from "@/utils/locale";
+import { RenameProjectIcon } from "@/public/icons/RenameProjectIcon";
 
 const TimelineNav = ( props: NavbarProps ) => {
   // Locals
@@ -106,6 +107,16 @@ const TimelineNav = ( props: NavbarProps ) => {
                 startContent={<LoadProjectIcon className={iconClasses} />}
               >
                 {t("openProject")}
+              </DropdownItem>
+              <DropdownItem
+                key="rename"
+                startContent={<RenameProjectIcon className={iconClasses} />}
+                className={projectState.editingMode
+                  ? ""
+                  : "hidden"
+                }
+              >
+                {t("renameProject")}
               </DropdownItem>
               <DropdownItem
                 key="save"
