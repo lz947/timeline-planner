@@ -26,8 +26,10 @@ import { locales, localNames } from "@/i18n/config";
 import { setUserLocale } from "@/utils/locale";
 import { RenameProjectIcon } from "@/public/icons/RenameProjectIcon";
 import RenameProjectModal from "../Modals/RenameProjectModal";
+import { useRouter } from "next/navigation";
 
 const TimelineNav = ( props: NavbarProps ) => {
+  const router = useRouter();
   // Locals
   const t = useTranslations("TimelineNav");
   const currentLocale = useLocale();
@@ -62,6 +64,10 @@ const TimelineNav = ( props: NavbarProps ) => {
     onClose: onRenameProjectModalClose 
   } = useDisclosure();
 
+  const routerToMainPage = () => {
+    console.log("Hello?")
+    router.push("/");
+  };
 
   const switchLanguage = (selectedLocalSet: any) => {
     setSelectedLocal(selectedLocalSet);
@@ -87,6 +93,8 @@ const TimelineNav = ( props: NavbarProps ) => {
                   const id = setTimeout(() => setIsProjectDropdownOpen(false), delay);
                   setProjectDropdownTimeoutId(id);
                 }}
+                // Use onClick here as onPress will be overwrite by DropdownTrigger
+                onClick={routerToMainPage}
               >
                 {projectState.editingMode
                   ? projectState.projectName
