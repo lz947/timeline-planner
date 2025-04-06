@@ -16,5 +16,12 @@
     "newProjectWarning": "You may lose the current project by creating a new project.",
     "closeButton": "Close",
     "createButton": "Create"
+  },
+  "RenameProjectModal": {
+    "header": "Rename Project",
+    "inputLabel": "Project Name",
+    "inputError": "Please enter a project name",
+    "closeButton": "Close",
+    "renameButton": "Rename"
   }
 }

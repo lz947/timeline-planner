@@ -25,6 +25,7 @@ import NewProjectModal from "../Modals/NewProjectModal";
 import { locales, localNames } from "@/i18n/config";
 import { setUserLocale } from "@/utils/locale";
 import { RenameProjectIcon } from "@/public/icons/RenameProjectIcon";
+import RenameProjectModal from "../Modals/RenameProjectModal";
 
 const TimelineNav = ( props: NavbarProps ) => {
   // Locals
@@ -53,6 +54,14 @@ const TimelineNav = ( props: NavbarProps ) => {
     onOpen: onNewProjectModalOpen, 
     onClose: onNewProjectModalClose 
   } = useDisclosure();
+
+  // Rename project modal
+  const { 
+    isOpen: isRenameProjectModalOpen, 
+    onOpen: onRenameProjectModalOpen, 
+    onClose: onRenameProjectModalClose 
+  } = useDisclosure();
+
 
   const switchLanguage = (selectedLocalSet: any) => {
     setSelectedLocal(selectedLocalSet);
@@ -111,6 +120,7 @@ const TimelineNav = ( props: NavbarProps ) => {
               <DropdownItem
                 key="rename"
                 startContent={<RenameProjectIcon className={iconClasses} />}
+                onPress={onRenameProjectModalOpen}
                 className={projectState.editingMode
                   ? ""
                   : "hidden"
@@ -192,10 +202,13 @@ const TimelineNav = ( props: NavbarProps ) => {
           </Dropdown>
         </NavbarItem>
       </NavbarContent>
-      {/* New Project Modal */}
+      {/* Modals */}
       <NewProjectModal isOpen={isNewProjectModalOpen} onOpenChange={onNewProjectModalClose}>
         <></>
       </NewProjectModal>
+      <RenameProjectModal isOpen={isRenameProjectModalOpen} onOpenChange={onRenameProjectModalClose}>
+        <></>
+      </RenameProjectModal>
     </Navbar>
   );
 }
