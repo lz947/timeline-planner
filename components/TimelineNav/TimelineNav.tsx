@@ -32,17 +32,18 @@ const TimelineNav = ( props: NavbarProps ) => {
 
   // UI
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
-  const [timeoutId, setTimeoutId] = React.useState<any>(null);
-  const delay = 1000;
 
   // States
   // Global state
   const { projectState } = useProjectState();
   // Nav Projects state 
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
+  const [projectDropdownTimeoutId, setProjectDropdownTimeoutId] = React.useState<any>(null);
+  const delay = 1000;
 
   // Locale states
   const [isLocalDropdownOpen, setIsLocalDropdownOpen] = React.useState(false);
+  const [localDropdownTimeoutId, setLocalDropdownTimeoutId] = React.useState<any>(null);
   const [selectedLocal, setSelectedLocal] = React.useState<Selection>(new Set([currentLocale]));
 
   // New Project Modal
@@ -69,12 +70,12 @@ const TimelineNav = ( props: NavbarProps ) => {
                 className="min-w-44 max-w-44"
                 variant="bordered"
                 onMouseEnter={() => {
-                  clearTimeout(timeoutId);
+                  clearTimeout(projectDropdownTimeoutId);
                   setIsProjectDropdownOpen(true);
                 }}
                 onMouseLeave={() => {
                   const id = setTimeout(() => setIsProjectDropdownOpen(false), delay);
-                  setTimeoutId(id);
+                  setProjectDropdownTimeoutId(id);
                 }}
               >
                 {projectState.editingMode
@@ -86,7 +87,7 @@ const TimelineNav = ( props: NavbarProps ) => {
             <DropdownMenu 
               variant="faded"
               onMouseEnter={() => {
-                clearTimeout(timeoutId);
+                clearTimeout(projectDropdownTimeoutId);
                 setIsProjectDropdownOpen(true);
               }}
               onMouseLeave={() => {
@@ -149,12 +150,12 @@ const TimelineNav = ( props: NavbarProps ) => {
                 width={36}
                 height={36}
                 onMouseEnter={() => {
-                  clearTimeout(timeoutId);
+                  clearTimeout(localDropdownTimeoutId);
                   setIsLocalDropdownOpen(true);
                 }}
                 onMouseLeave={() => {
                   const id = setTimeout(() => setIsLocalDropdownOpen(false), delay);
-                  setTimeoutId(id);
+                  setLocalDropdownTimeoutId(id);
                 }}
               />
             </DropdownTrigger>
@@ -164,7 +165,7 @@ const TimelineNav = ( props: NavbarProps ) => {
               selectedKeys={selectedLocal}
               onSelectionChange={switchLanguage}
               onMouseEnter={() => {
-                clearTimeout(timeoutId);
+                clearTimeout(localDropdownTimeoutId);
                 setIsLocalDropdownOpen(true);
               }}
               onMouseLeave={() => {
