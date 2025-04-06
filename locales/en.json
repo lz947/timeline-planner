@@ -6,6 +6,7 @@
     "renameProject": "Rename Project",
     "saveProject": "Save Project",
     "entityPageLink": "Entities",
+    "chapterPageLink": "Chapters",
     "eventPageLink": "Events"
   },
   "NewProjectModal": {

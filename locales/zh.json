@@ -6,6 +6,7 @@
     "renameProject": "重命名项目",
     "saveProject": "保存项目",
     "entityPageLink": "实体",
+    "chapterPageLink": "章节",
     "eventPageLink": "事件"
   },
   "NewProjectModal": {

@@ -186,6 +186,15 @@ const TimelineNav = ( props: NavbarProps ) => {
         <NavbarItem>
           <Link 
             color="foreground"
+            href="/chapters"
+            isDisabled={!projectState.editingMode}
+          >
+            {t("chapterPageLink")}
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link 
+            color="foreground"
             href="/events"
             isDisabled={!projectState.editingMode}
           >
