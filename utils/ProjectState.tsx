@@ -2,26 +2,17 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 //entities
 // {id: {id:xxx, name:xxx...}}
-interface Entity {
+export interface Entity {
   id: number;
+  type: string;
   name: string;
-  entityType: EntityType;
-  entityTypeValues: [];
 }
 
-//entity type: a custom set of keys that needed in the entity
-interface EntityType {
-  id: number;
-  keys: [];
-}
-
-interface ProjectState {
+export interface ProjectState {
   projectName: string;
   editingMode: boolean;
   entityTrackingId: number;
   entities: Record<number, Entity>;
-  entityTypeTrackingId: number;
-  entityTypes: Record<number, Entity>;
 }
 
 interface ProjectStateContextType {
@@ -44,9 +35,7 @@ export const StateProvider = ({ children } : { children:any }) => {
     projectName: "New Project",
     editingMode: false,
     entityTrackingId: 0,
-    entities: {},
-    entityTypeTrackingId: 0,
-    entityTypes: {},
+    entities: {}
   });
 
   const setProjectName = (newProjectName: string) => {
@@ -99,6 +88,8 @@ export const StateProvider = ({ children } : { children:any }) => {
       return { ...prevState, entities: newEntities };
     });
   };
+
+
 
   return (
     <StateContext.Provider 
