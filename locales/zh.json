@@ -16,7 +16,7 @@
     "header": "新建项目",
     "inputLabel": "项目名称",
     "inputError": "项目名称不可为空",
-    "newProjectWarning": "新建项目可能会导致当前未保存的项目丢失.",
+    "newProjectWarning": "新建项目可能会导致当前未保存的项目丢失",
     "closeButton": "关闭",
     "createButton": "创建"
   },
@@ -33,5 +33,16 @@
     "inputError": "项目名称不可为空",
     "closeButton": "关闭",
     "renameButton": "重命名"
+  },
+  "NewEntityModal": {
+    "defaultEntityType": "实体种类1",
+    "defaultEntityName": "新实体",
+    "header": "新建实体",
+    "entityTypeInputLabel": "实体种类",
+    "entityTypeInputError": "实体种类不可为空",
+    "entityNameInputLabel": "实体名称",
+    "entityNameInputError": "实体名称不可为空",
+    "closeButton": "关闭",
+    "createButton": "创建"
   }
 }

@@ -33,5 +33,16 @@
     "inputError": "Please enter a project name",
     "closeButton": "Close",
     "renameButton": "Rename"
+  },
+  "NewEntityModal": {
+    "defaultEntityType": "Type 01",
+    "defaultEntityName": "New Entity",
+    "header": "New Entity",
+    "entityTypeInputLabel": "Entity Type",
+    "entityTypeInputError": "Entity type is required.",
+    "entityNameInputLabel": "Entity Name",
+    "entityNameInputError": "Entity name is required.",
+    "closeButton": "Close",
+    "createButton": "Create"
   }
 }

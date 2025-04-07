@@ -28,6 +28,7 @@ import { RenameProjectIcon } from "@/public/icons/RenameProjectIcon";
 import RenameProjectModal from "../Modals/RenameProjectModal";
 import { useRouter } from "next/navigation";
 import OpenProjectModal from "../Modals/OpenProjectModal";
+import NewEntityModal from "../Modals/NewEntityModal";
 
 const TimelineNav = ( props: NavbarProps ) => {
   const router = useRouter();
@@ -60,19 +61,23 @@ const TimelineNav = ( props: NavbarProps ) => {
     onOpen: onNewProjectModalOpen, 
     onClose: onNewProjectModalClose 
   } = useDisclosure();
-
   //Load project modal
   const { 
     isOpen: isOpenProjectModalOpen, 
     onOpen: onOpenProjectModalOpen, 
     onClose: onOpenProjectModalClose 
   } = useDisclosure();
-
   // Rename project modal
   const { 
     isOpen: isRenameProjectModalOpen, 
     onOpen: onRenameProjectModalOpen, 
     onClose: onRenameProjectModalClose 
+  } = useDisclosure();
+  // New Entity Modal
+  const { 
+    isOpen: isNewEntityModalOpen, 
+    onOpen: onNewEntityModalOpen, 
+    onClose: onNewEntityModalClose 
   } = useDisclosure();
 
   const switchLanguage = (selectedLocalSet: any) => {
@@ -209,7 +214,7 @@ const TimelineNav = ( props: NavbarProps ) => {
               </DropdownItem>
               <DropdownItem
                 key="entityCreate"
-                // onPress={onOpenProjectModalOpen}
+                onPress={onNewEntityModalOpen}
               >
                 {t("createNewEntity")}
               </DropdownItem>
@@ -287,6 +292,9 @@ const TimelineNav = ( props: NavbarProps ) => {
       <RenameProjectModal isOpen={isRenameProjectModalOpen} onOpenChange={onRenameProjectModalClose}>
         <></>
       </RenameProjectModal>
+      <NewEntityModal isOpen={isNewEntityModalOpen} onOpenChange={onNewEntityModalClose}>
+        <></>
+      </NewEntityModal>
     </Navbar>
   );
 }
