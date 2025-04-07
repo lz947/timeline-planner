@@ -12,7 +12,7 @@ import {
   ModalHeader, 
   ModalProps
 } from "@heroui/react";
-import { ProjectState, useProjectState } from "@/utils/ProjectState";
+import { createNewProjectState, useProjectState } from "@/utils/ProjectState";
 
 const NewProjectModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewProjectModal");
@@ -25,14 +25,7 @@ const NewProjectModal = ( props:  ModalProps ) => {
   const createNewProject = () => {
     // Prepare newProjectState
     // Set everything to default
-    const newProjectState = {
-      // Use the name from input as the project name
-      projectName: newProjectInput,
-      // Enable editing mode
-      editingMode: true,
-      entityTrackingId: 0,
-      entities: {}
-    } as ProjectState;
+    const newProjectState = createNewProjectState();
     setProjectState(newProjectState);
   };
 
