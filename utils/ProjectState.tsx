@@ -13,6 +13,7 @@ export interface ProjectState {
   editingMode: boolean;
   entityTrackingId: number;
   entities: Record<number, Entity>;
+  entityTypes: Array<string>;
 }
 
 interface ProjectStateContextType {
@@ -20,10 +21,13 @@ interface ProjectStateContextType {
   setProjectState: (newProjectState: ProjectState) => void;
   setEditingMode: (newEditingMode: boolean) => void;
   setProjectName: (newProjectName: string) => void;
-  setProjectEntity: (newProjectEntity: Record<number, Entity>) => void;
+  setProjectEntites: (newProjectEntity: Record<number, Entity>) => void;
   addEntity: (newEntity: Entity) => void;
   editEntity: (id: number, newEntity: Entity) => void;
   deleteEntity: (id: number) => void;
+  setEntityTypes: (newEntityTypes: Array<string>) => void;
+  addEntityType: (newEntityType: string) => void;
+  deleteEntityType: (id: number) => void;
 }
 
 // Define the context
@@ -35,7 +39,8 @@ export const StateProvider = ({ children } : { children:any }) => {
     projectName: "New Project",
     editingMode: false,
     entityTrackingId: 0,
-    entities: {}
+    entities: {},
+    entityTypes: []
   });
 
   const setProjectName = (newProjectName: string) => {
@@ -52,10 +57,11 @@ export const StateProvider = ({ children } : { children:any }) => {
     }));
   };
 
-  const setProjectEntity = (newProjectEntity: Record<number, Entity>) => {
+  // Entities
+  const setProjectEntites = (newProjectEntities: Record<number, Entity>) => {
     setProjectState((prevState) => ({
       ...prevState,
-      entities: newProjectEntity,
+      entities: newProjectEntities,
     }));
   };
 
@@ -89,14 +95,35 @@ export const StateProvider = ({ children } : { children:any }) => {
     });
   };
 
+  // Entity type
+  const setEntityTypes = (newEntityTypes: Array<string>) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      entityTypes: newEntityTypes,
+    }));
+  };
 
+  const addEntityType = (newEntityType: string) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      entityTypes: [...prevState.entityTypes, newEntityType],
+    }));
+  };
+
+  const deleteEntityType = (targetEntityTypeIndex: number) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      entityTypes: prevState.entityTypes.filter((_, i) => i !== targetEntityTypeIndex),
+    }));0
+  };
 
   return (
     <StateContext.Provider 
       value={{ 
         projectState, setProjectState,
         setProjectName, setEditingMode,
-        setProjectEntity, addEntity, editEntity, deleteEntity  
+        setProjectEntites, addEntity, editEntity, deleteEntity,
+        setEntityTypes, addEntityType, deleteEntityType
       }}
     >
       {children}
@@ -112,3 +139,13 @@ export const useProjectState = (): ProjectStateContextType => {
   }
   return context;
 };
+
+export const createNewProjectState = () => {
+  return {
+    projectName: "New Project",
+    editingMode: false,
+    entityTrackingId: 0,
+    entities: {},
+    entityTypes: []
+  } as ProjectState;
+}
