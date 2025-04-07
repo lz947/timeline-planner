@@ -143,7 +143,7 @@ export const useProjectState = (): ProjectStateContextType => {
 export const createNewProjectState = () => {
   return {
     projectName: "New Project",
-    editingMode: false,
+    editingMode: true,
     entityTrackingId: 0,
     entities: {},
     entityTypes: []
