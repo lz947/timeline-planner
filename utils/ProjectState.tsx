@@ -140,9 +140,9 @@ export const useProjectState = (): ProjectStateContextType => {
   return context;
 };
 
-export const createNewProjectState = () => {
+export const createNewProjectState = (newProjectName: string) => {
   return {
-    projectName: "New Project",
+    projectName: newProjectName,
     editingMode: true,
     entityTrackingId: 0,
     entities: {},

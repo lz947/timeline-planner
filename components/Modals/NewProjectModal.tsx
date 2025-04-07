@@ -25,7 +25,7 @@ const NewProjectModal = ( props:  ModalProps ) => {
   const createNewProject = () => {
     // Prepare newProjectState
     // Set everything to default
-    const newProjectState = createNewProjectState();
+    const newProjectState = createNewProjectState(newProjectInput);
     setProjectState(newProjectState);
   };
 
