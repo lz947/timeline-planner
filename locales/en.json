@@ -7,7 +7,9 @@
     "saveProject": "Save Project",
     "entityPageLink": "Entities",
     "chapterPageLink": "Chapters",
-    "eventPageLink": "Events"
+    "eventPageLink": "Events",
+    "entityOverview": "Overview",
+    "createNewEntity": "Create new entity"
   },
   "NewProjectModal": {
     "defaultProjectName": "New Project",

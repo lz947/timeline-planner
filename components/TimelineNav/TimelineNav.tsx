@@ -41,10 +41,13 @@ const TimelineNav = ( props: NavbarProps ) => {
   // States
   // Global state
   const { projectState } = useProjectState();
+  const delay = 1000;
   // Nav Projects state 
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = React.useState(false);
   const [projectDropdownTimeoutId, setProjectDropdownTimeoutId] = React.useState<any>(null);
-  const delay = 1000;
+  // Entities state
+  const [isEntityDropdownOpen, setIsEntityDropdownOpen] = React.useState(false);
+  const [entityDropdownTimeoutId, setEntityDropdownTimeoutId] = React.useState<any>(null);
 
   // Locale states
   const [isLocalDropdownOpen, setIsLocalDropdownOpen] = React.useState(false);
@@ -93,7 +96,7 @@ const TimelineNav = ( props: NavbarProps ) => {
   };
 
   return (
-    <Navbar {...props}>
+    <Navbar maxWidth="2xl" {...props}>
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarItem>
           <Dropdown
@@ -130,21 +133,21 @@ const TimelineNav = ( props: NavbarProps ) => {
               }}
             >
               <DropdownItem
-                key="new"
+                key="projectNew"
                 startContent={<NewProjectIcon className={iconClasses} />}
                 onPress={onNewProjectModalOpen}
               >
                 {t("newProject")}
               </DropdownItem>
               <DropdownItem
-                key="open"
+                key="projectOpen"
                 startContent={<LoadProjectIcon className={iconClasses} />}
                 onPress={onOpenProjectModalOpen}
               >
                 {t("openProject")}
               </DropdownItem>
               <DropdownItem
-                key="rename"
+                key="projectRename"
                 startContent={<RenameProjectIcon className={iconClasses} />}
                 onPress={onRenameProjectModalOpen}
                 className={projectState.editingMode
@@ -155,7 +158,7 @@ const TimelineNav = ( props: NavbarProps ) => {
                 {t("renameProject")}
               </DropdownItem>
               <DropdownItem
-                key="save"
+                key="projectSave"
                 startContent={<SaveProjectIcon className={iconClasses} />}
                 onPress={saveProjectAsJson}
                 className={projectState.editingMode
@@ -169,13 +172,49 @@ const TimelineNav = ( props: NavbarProps ) => {
           </Dropdown>
         </NavbarItem>
         <NavbarItem>
-          <Link 
-            color="foreground"
-            href="/entities"
-            isDisabled={!projectState.editingMode}
-          >
-            {t("entityPageLink")}
-          </Link>
+          <Dropdown
+            isOpen={isEntityDropdownOpen}>
+            <DropdownTrigger>
+              <Link 
+                color="foreground"
+                href="/entities"
+                isDisabled={!projectState.editingMode}
+                onMouseEnter={() => {
+                  clearTimeout(entityDropdownTimeoutId);
+                  setIsEntityDropdownOpen(true);
+                }}
+                onMouseLeave={() => {
+                  const id = setTimeout(() => setIsEntityDropdownOpen(false), delay);
+                  setEntityDropdownTimeoutId(id);
+                }}
+              >
+                {t("entityPageLink")}
+              </Link>
+            </DropdownTrigger>
+            <DropdownMenu 
+              variant="faded"
+              onMouseEnter={() => {
+                clearTimeout(entityDropdownTimeoutId);
+                setIsEntityDropdownOpen(true);
+              }}
+              onMouseLeave={() => {
+                setIsEntityDropdownOpen(false);
+              }}
+            >
+              <DropdownItem
+                key="entityOverview"
+                onPress={()=>{router.push("/entities")}}
+              >
+                {t("entityOverview")}
+              </DropdownItem>
+              <DropdownItem
+                key="entityCreate"
+                // onPress={onOpenProjectModalOpen}
+              >
+                {t("createNewEntity")}
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
         <NavbarItem>
           <Link 

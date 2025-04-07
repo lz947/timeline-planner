@@ -7,7 +7,9 @@
     "saveProject": "保存项目",
     "entityPageLink": "实体",
     "chapterPageLink": "章节",
-    "eventPageLink": "事件"
+    "eventPageLink": "事件",
+    "entityOverview": "实体总览",
+    "createNewEntity": "创建新实体"
   },
   "NewProjectModal": {
     "defaultProjectName": "新项目",
