@@ -17,7 +17,7 @@ import { Entity, useProjectState } from "@/utils/ProjectState";
 const NewEntityModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
   // States
-  const { projectState, addEntity } = useProjectState();
+  const { projectState, addEntity, addEntityType } = useProjectState();
   const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
   const [newEntityNameInvalid, setNewEntityNameInvalid] = React.useState(false);
@@ -25,8 +25,11 @@ const NewEntityModal = ( props:  ModalProps ) => {
 
   // Functions
   const createNewEntity = () => {
-    // Prepare newProjectState
-    // Set everything to default
+    // Check if it's a new entity type:
+    if (!projectState.entityTypes.includes(newEntityType)) {
+      addEntityType(newEntityType);
+    }
+    // create the new entity
     const newEntity = {
       id: projectState.entityTrackingId,
       type: newEntityType,
@@ -63,16 +66,6 @@ const NewEntityModal = ( props:  ModalProps ) => {
             <ModalBody>
               <Input
                 isRequired
-                label={t("entityTypeInputLabel")}
-                type="text"
-                variant="underlined"
-                value={newEntityType}
-                onChange={onNewEntityTypeChange}
-                isInvalid={newEntityTypeInvalid}
-                errorMessage={t("entityTypeInputError")}
-              />
-              <Input
-                isRequired
                 label={t("entityNameInputLabel")}
                 type="text"
                 variant="underlined"
@@ -80,6 +73,16 @@ const NewEntityModal = ( props:  ModalProps ) => {
                 onChange={onNewEntityNameChange}
                 isInvalid={newEntityNameInvalid}
                 errorMessage={t("entityNameInputError")}
+              />
+              <Input
+                isRequired
+                label={t("entityTypeInputLabel")}
+                type="text"
+                variant="underlined"
+                value={newEntityType}
+                onChange={onNewEntityTypeChange}
+                isInvalid={newEntityTypeInvalid}
+                errorMessage={t("entityTypeInputError")}
               />
             </ModalBody>
             <ModalFooter>
