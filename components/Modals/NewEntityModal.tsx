@@ -76,16 +76,6 @@ const NewEntityModal = ( props:  ModalProps ) => {
                 isInvalid={newEntityNameInvalid}
                 errorMessage={t("entityNameInputError")}
               />
-              <Input
-                isRequired
-                label={t("entityTypeInputLabel")}
-                type="text"
-                variant="underlined"
-                value={newEntityType}
-                // onChange={onNewEntityTypeChange}
-                isInvalid={newEntityTypeInvalid}
-                errorMessage={t("entityTypeInputError")}
-              />
               <Autocomplete
                 isRequired
                 label={t("entityTypeInputLabel")}
