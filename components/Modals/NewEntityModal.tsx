@@ -10,7 +10,9 @@ import {
   ModalContent, 
   ModalFooter, 
   ModalHeader, 
-  ModalProps
+  ModalProps,
+  Autocomplete,
+  AutocompleteItem
 } from "@heroui/react";
 import { Entity, useProjectState } from "@/utils/ProjectState";
 
@@ -39,8 +41,8 @@ const NewEntityModal = ( props:  ModalProps ) => {
   };
 
   const onNewEntityTypeChange = (e: any) => {
-    setNewEntityType(e.target.value);
-    if (e.target.value == "") {
+    setNewEntityType(e);
+    if (e == "") {
       setNewEntityTypeInvalid(true);
     } else {
       setNewEntityTypeInvalid(false);
@@ -80,10 +82,29 @@ const NewEntityModal = ( props:  ModalProps ) => {
                 type="text"
                 variant="underlined"
                 value={newEntityType}
-                onChange={onNewEntityTypeChange}
+                // onChange={onNewEntityTypeChange}
                 isInvalid={newEntityTypeInvalid}
                 errorMessage={t("entityTypeInputError")}
               />
+              <Autocomplete
+                isRequired
+                label={t("entityTypeInputLabel")}
+                variant="underlined"
+                inputValue={newEntityType}
+                onInputChange={onNewEntityTypeChange}
+                isInvalid={newEntityTypeInvalid}
+                errorMessage={t("entityTypeInputError")}
+                allowsCustomValue
+              >
+                {
+                  projectState.entityTypes.map(
+                    (entityType, index) => (
+                      <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
+                    )
+                  )
+                }
+                
+              </Autocomplete>
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
