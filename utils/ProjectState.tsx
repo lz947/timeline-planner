@@ -6,7 +6,7 @@ export interface Entity {
   id: number;
   type: string;
   name: string;
-  status: Record<string, {}>;
+  status: Record<string, Record<number, string[]>>;
 }
 
 export interface ProjectState {
