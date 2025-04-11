@@ -6,6 +6,7 @@ export interface Entity {
   id: number;
   type: string;
   name: string;
+  status: Record<string, {}>;
 }
 
 export interface ProjectState {
@@ -15,6 +16,40 @@ export interface ProjectState {
   entities: Record<number, Entity>;
   entityTypes: Array<string>;
 }
+
+// Create new project
+export const createNewProjectState = (newProjectName: string) => {
+  return {
+    projectName: newProjectName,
+    editingMode: true,
+    entityTrackingId: 0,
+    entities: {},
+    entityTypes: []
+  } as ProjectState;
+}
+
+// Verify if a object is project
+
+const instanceOfEntity = (object: any) => {
+  const entityCheck =
+    ("id" in object) && ("type" in object) && 
+    ("name" in object) && ("status" in object);
+  return entityCheck;
+};
+
+export const instanceOfProjectState = (object: any) => {
+  const basicCheck = 
+    ("projectName" in object) && ("editingMode" in object) && 
+    ("entityTrackingId" in object) && ("entities" in object);
+
+  for (var entity in object.entities) {
+    if (!instanceOfEntity(object.entities[entity])) {
+      return false;
+    }
+  }
+
+  return basicCheck;
+};
 
 interface ProjectStateContextType {
   projectState: ProjectState;
@@ -139,13 +174,3 @@ export const useProjectState = (): ProjectStateContextType => {
   }
   return context;
 };
-
-export const createNewProjectState = (newProjectName: string) => {
-  return {
-    projectName: newProjectName,
-    editingMode: true,
-    entityTrackingId: 0,
-    entities: {},
-    entityTypes: []
-  } as ProjectState;
-}

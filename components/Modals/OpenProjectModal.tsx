@@ -12,7 +12,7 @@ import {
   ModalHeader, 
   ModalProps
 } from "@heroui/react";
-import { useProjectState } from "@/utils/ProjectState";
+import { instanceOfProjectState, useProjectState } from "@/utils/ProjectState";
 
 const OpenProjectModal = ( props:  ModalProps ) => {
   const t = useTranslations("OpenProjectModal");
@@ -21,30 +21,6 @@ const OpenProjectModal = ( props:  ModalProps ) => {
   const [projectInvalid, setProjectInvalid] = React.useState(false);
   const [emptyProjectInput, setEmptyProjectInput] = React.useState(true);
   const [projectJsonText, setProjectJsonText] = React.useState("");
-
-  const instanceOfEntity = (object: any) => {
-    console.log("check entity");
-    console.log(object);
-    console.log(("id" in object) && ("type" in object) && ("name" in object));
-    return ("id" in object) && ("type" in object) && ("name" in object);
-  };
-
-  const instanceOfProjectState = (object: any) => {
-    console.log("check project state");
-    console.log(object);
-    const basicCheck = 
-      ("projectName" in object) && ("editingMode" in object) && 
-      ("entityTrackingId" in object) && ("entities" in object);
-    console.log(basicCheck);
-    var entitiesCheck = true;
-    for (var entity in object.entities) {
-      if (!instanceOfEntity(object.entities[entity])) {
-        entitiesCheck = false;
-      }
-    }
-
-    return basicCheck && entitiesCheck;
-  };
 
   // Functions
   const openProject = (onClose : any) => {
