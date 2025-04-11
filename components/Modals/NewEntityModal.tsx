@@ -12,7 +12,8 @@ import {
   ModalHeader, 
   ModalProps,
   Autocomplete,
-  AutocompleteItem
+  AutocompleteItem,
+  Tooltip
 } from "@heroui/react";
 import { Entity, useProjectState } from "@/utils/ProjectState";
 
@@ -24,6 +25,8 @@ const NewEntityModal = ( props:  ModalProps ) => {
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
   const [newEntityNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [newEntityName, setNewEntityName] = React.useState(t("defaultEntityName"));
+  const [newEntityStatusKeys, setNewEntityStatusKeys] = React.useState([]);
+  const [newEntityStatusValues, setNewEntityStatusValues] = React.useState([]);
 
   // Functions
   const createNewEntity = () => {
@@ -95,6 +98,13 @@ const NewEntityModal = ( props:  ModalProps ) => {
                 }
                 
               </Autocomplete>
+              <Tooltip content="Click to add initial status (key-value) of the entity, eg: birthday - 2000-01-01, status can be modified by events" showArrow={true}>
+                <Button
+                  variant="bordered"
+                  size="sm"
+                  className="max-w-32"
+                >Add Initial Status</Button>
+              </Tooltip>
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
