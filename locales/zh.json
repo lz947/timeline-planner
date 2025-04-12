@@ -35,13 +35,23 @@
     "renameButton": "重命名"
   },
   "NewEntityModal": {
+    "header": "新建实体",
     "defaultEntityType": "实体种类1",
     "defaultEntityName": "新实体",
-    "header": "新建实体",
     "entityTypeInputLabel": "实体种类",
     "entityTypeInputError": "实体种类不可为空",
     "entityNameInputLabel": "实体名称",
     "entityNameInputError": "实体名称不可为空",
+    "defaultEntityStatusKey": "状态种类",
+    "defaultEntitystatusValue": "状态值",
+    "addStatusToolTip": "点击增加实体的状态 (种类-值), 例如: 生日 - 2000-01-01, 实体的状态可被事件修改",
+    "addStatusButton": "增加初始状态",
+    "removeStatusToolTip": "点击删除所有的初始状态.",
+    "removeStatusButton": "移除全部状态",
+    "statusKeyLabel": "状态种类",
+    "statusKeyError": "状态种类不可为空/重复",
+    "statusValueLabel": "状态值",
+    "statusValueError": "状态值名称不可为空",
     "closeButton": "关闭",
     "createButton": "创建"
   }

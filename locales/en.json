@@ -35,13 +35,23 @@
     "renameButton": "Rename"
   },
   "NewEntityModal": {
+    "header": "New Entity",
     "defaultEntityType": "Type 01",
     "defaultEntityName": "New Entity",
-    "header": "New Entity",
     "entityTypeInputLabel": "Entity Type",
     "entityTypeInputError": "Entity type is required.",
     "entityNameInputLabel": "Entity Name",
     "entityNameInputError": "Entity name is required.",
+    "defaultEntityStatusKey": "Key",
+    "defaultEntitystatusValue": "Value",
+    "addStatusToolTip": "Click to add initial status (key-value) of the entity, eg: birthday - 2000-01-01, status can be modified by events.",
+    "addStatusButton": "Add Initial Status",
+    "removeStatusToolTip": "Click to remove ALL initial Status for this entity.",
+    "removeStatusButton": "Remove All",
+    "statusKeyLabel": "Status Key",
+    "statusKeyError": "Status key is empty or duplicated.",
+    "statusValueLabel": "Status Value",
+    "statusValueError": "Status value is empty.",
     "closeButton": "Close",
     "createButton": "Create"
   }
