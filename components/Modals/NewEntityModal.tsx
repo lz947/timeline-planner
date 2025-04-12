@@ -30,6 +30,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
   const [newEntityStatusValues, setNewEntityStatusValues] = React.useState<string[]>([]);
   const [newEntityStatusInvalidKeys, setNewEntityStatusInvalidKeys] = React.useState<boolean[]>([]);
   const [newEntityStatusInvalidValues, setNewEntityStatusInvalidValues] = React.useState<boolean[]>([]);
+  const [duplicatedStatusKeys, setDuplicatedStatusKeys] = React.useState<boolean[]>([]);
 
   // Functions
   // Create the new entity
@@ -73,38 +74,65 @@ const NewEntityModal = ( props:  ModalProps ) => {
   };
 
   // Entity status
+  // Give a input array, return a array with same size where:
+  // each element is true/false depend if that element is duplicated on input array
+  const findDuplicates = (inputArray: Array<any>) => {
+    const valueIndex = new Map();
+    const duplicats = [];
+
+    for (let i = 0; i < inputArray.length; i++) {
+      if (valueIndex.has(inputArray[i])) {
+        if(valueIndex.get(inputArray[i]) !== -1){
+          duplicats[valueIndex.get(inputArray[i])] = true;
+          valueIndex.set(inputArray[i], -1);
+        }
+        duplicats.push(true);
+      } else {
+        valueIndex.set(inputArray[i], i);
+        duplicats.push(false);
+      }
+    }
+    return duplicats;
+  };
+
   const addNewStatusInputs = () => {
-    const newKey = `Key ${newEntityStatusKeys.length + 1}`;
-    const newValue = `Value ${newEntityStatusValues.length + 1}`;
-    setNewEntityStatusKeys([...newEntityStatusKeys, newKey]);
+    const newKey = `${t("defaultEntityStatusKey")} ${newEntityStatusKeys.length + 1}`;
+    const newValue = `${t("defaultEntitystatusValue")} ${newEntityStatusValues.length + 1}`;
+    const newKeys = [...newEntityStatusKeys, newKey];
+    setNewEntityStatusKeys(newKeys);
     setNewEntityStatusValues([...newEntityStatusValues, newValue]);
     setNewEntityStatusInvalidKeys([...newEntityStatusInvalidKeys, false]);
     setNewEntityStatusInvalidValues([...newEntityStatusInvalidValues, false]);
-  }
+    setDuplicatedStatusKeys(findDuplicates(newKeys));
+  };
 
   const removeAllStatusInputs = () => {
     setNewEntityStatusKeys([]);
     setNewEntityStatusValues([]);
     setNewEntityStatusInvalidKeys([]);
     setNewEntityStatusInvalidValues([]);
+    setDuplicatedStatusKeys([]);
   }
 
   const removeOneStatusInputsByIndex = (indexToRemove: number) => {
-    setNewEntityStatusKeys(newEntityStatusKeys.filter((_, index) => index !== indexToRemove));
+    const newKeys = newEntityStatusKeys.filter((_, index) => index !== indexToRemove);
+    setNewEntityStatusKeys(newKeys);
     setNewEntityStatusValues(newEntityStatusValues.filter((_, index) => index !== indexToRemove));
     setNewEntityStatusInvalidKeys(newEntityStatusInvalidKeys.filter((_, index) => index !== indexToRemove));
     setNewEntityStatusInvalidValues(newEntityStatusInvalidValues.filter((_, index) => index !== indexToRemove));
+    setDuplicatedStatusKeys(findDuplicates(newKeys));
   }
 
   // Actual value change
   const onNewEntityStatusKeyChange = (e: any, indexToEdit: number) => {
-    setNewEntityStatusKeys(newEntityStatusKeys.map((item, idx) => (idx === indexToEdit ? e.target.value : item)));
+    const newKeys = newEntityStatusKeys.map((item, idx) => (idx === indexToEdit ? e.target.value : item));
     if (e.target.value == "") {
       setNewEntityStatusInvalidKeys(newEntityStatusInvalidKeys.map((item, idx) => (idx === indexToEdit ? true : item)));
     } else {
       setNewEntityStatusInvalidKeys(newEntityStatusInvalidKeys.map((item, idx) => (idx === indexToEdit ? false : item)));
     }
-    // TODO: Show error on duplicated key:
+    setNewEntityStatusKeys(newKeys);
+    setDuplicatedStatusKeys(findDuplicates(newKeys));
   };
 
   const onNewEntityStatusValueChange = (e: any, indexToEdit: number) => {
@@ -150,26 +178,25 @@ const NewEntityModal = ( props:  ModalProps ) => {
                     )
                   )
                 }
-                
               </Autocomplete>
               <div 
                 className="flex gap-4 items-center"
               >
                 <Tooltip 
                   showArrow={true}
-                  content="Click to add initial status (key-value) of the entity, eg: birthday - 2000-01-01, status can be modified by events."
+                  content={t("addStatusToolTip")}
                 >
                   <Button
                     variant="bordered"
                     size="sm"
                     className="max-w-32"
                     onPress={addNewStatusInputs}
-                  >Add Initial Status</Button>
+                  >{t("addStatusButton")}</Button>
                 </Tooltip>
                 <Tooltip
                   color="danger"
                   showArrow={true}
-                  content="Click to remove ALL initial Status for this entity."
+                  content={t("removeStatusToolTip")}
                 >
                   <Button
                     variant="bordered"
@@ -177,7 +204,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
                     className="max-w-32"
                     color="danger"
                     onPress={removeAllStatusInputs}
-                  >Remove All</Button>
+                  >{t("removeStatusButton")}</Button>
                 </Tooltip>
               </div>
               <div>
@@ -188,23 +215,23 @@ const NewEntityModal = ( props:  ModalProps ) => {
                   >
                     <Input
                       isRequired
-                      label={"Status Key"}
+                      label={t("statusKeyLabel")}
                       type="text"
                       variant="underlined"
                       value={statusKey}
                       onChange={(e)=>{onNewEntityStatusKeyChange(e,index)}}
-                      isInvalid={newEntityStatusInvalidKeys[index]}
-                      errorMessage={t("entityNameInputError")}
+                      isInvalid={newEntityStatusInvalidKeys[index] || duplicatedStatusKeys[index]}
+                      errorMessage={t("statusKeyError")}
                     />
                     <Input
                       isRequired
-                      label={"Status Value"}
+                      label={t("statusValueLabel")}
                       type="text"
                       variant="underlined"
                       value={newEntityStatusValues[index]}
                       onChange={(e)=>{onNewEntityStatusValueChange(e,index)}}
                       isInvalid={newEntityStatusInvalidValues[index]}
-                      errorMessage={t("entityNameInputError")}
+                      errorMessage={t("statusValueError")}
                     />
                     <Button 
                       isIconOnly
@@ -231,7 +258,8 @@ const NewEntityModal = ( props:  ModalProps ) => {
                 isDisabled={
                   newEntityNameInvalid || newEntityTypeInvalid || 
                   newEntityStatusInvalidKeys.some(val => val === true) ||
-                  newEntityStatusInvalidValues.some(val => val === true)
+                  newEntityStatusInvalidValues.some(val => val === true) ||
+                  duplicatedStatusKeys.some(val => val === true)
                 }
                 onPress={()=>{createNewEntity();onClose();}}
               >
