@@ -6,6 +6,7 @@ export interface Entity {
   id: number;
   type: string;
   name: string;
+  color: string;
   status: Record<string, Record<number, string[]>>;
 }
 

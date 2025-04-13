@@ -17,15 +17,17 @@ import {
 } from "@heroui/react";
 import { Entity, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
+import { getRandomColor } from "@/utils/misc";
 
 const NewEntityModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
   // States
   const { projectState, addEntity, addEntityType } = useProjectState();
-  const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
-  const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
   const [newEntityNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [newEntityName, setNewEntityName] = React.useState(t("defaultEntityName"));
+  const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
+  const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
+  const [newEntityColor, setNewEntityColor] = React.useState(getRandomColor());
   const [newEntityStatusKeys, setNewEntityStatusKeys] = React.useState<string[]>([]);
   const [newEntityStatusValues, setNewEntityStatusValues] = React.useState<string[]>([]);
   const [newEntityStatusInvalidKeys, setNewEntityStatusInvalidKeys] = React.useState<boolean[]>([]);
@@ -44,6 +46,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
       id: projectState.entityTrackingId,
       type: newEntityType,
       name: newEntityName,
+      color: newEntityColor,
       status: {},
     } as Entity;
     // Add the status attributes use -1 as initial status
@@ -54,7 +57,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
     addEntity(newEntity);
   };
 
-  // Entity Name and type
+  // Entity Name, type, and color
   const onNewEntityNameChange = (e: any) => {
     setNewEntityName(e.target.value);
     if (e.target.value == "") {
@@ -72,6 +75,10 @@ const NewEntityModal = ( props:  ModalProps ) => {
       setNewEntityTypeInvalid(false);
     }
   };
+
+  const onNewEntityColorChange = (e: any) => {
+    setNewEntityColor(e.target.value);
+  }
 
   // Entity status
   // Give a input array, return a array with same size where:
@@ -145,7 +152,10 @@ const NewEntityModal = ( props:  ModalProps ) => {
   };
 
   return (
-    <Modal {...props}>
+    <Modal 
+      size="xl"
+      {...props}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -161,24 +171,40 @@ const NewEntityModal = ( props:  ModalProps ) => {
                 isInvalid={newEntityNameInvalid}
                 errorMessage={t("entityNameInputError")}
               />
-              <Autocomplete
-                isRequired
-                label={t("entityTypeInputLabel")}
-                variant="underlined"
-                inputValue={newEntityType}
-                onInputChange={onNewEntityTypeChange}
-                isInvalid={newEntityTypeInvalid}
-                errorMessage={t("entityTypeInputError")}
-                allowsCustomValue
+              <div 
+                className="flex gap-4 items-center"
               >
-                {
-                  projectState.entityTypes.map(
-                    (entityType, index) => (
-                      <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
+                <Autocomplete
+                  isRequired
+                  label={t("entityTypeInputLabel")}
+                  variant="underlined"
+                  inputValue={newEntityType}
+                  onInputChange={onNewEntityTypeChange}
+                  isInvalid={newEntityTypeInvalid}
+                  errorMessage={t("entityTypeInputError")}
+                  allowsCustomValue
+                >
+                  {
+                    projectState.entityTypes.map(
+                      (entityType, index) => (
+                        <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
+                      )
                     )
-                  )
-                }
-              </Autocomplete>
+                  }
+                </Autocomplete>
+                <Input
+                  type="color"
+                  onChange={onNewEntityColorChange}
+                  value={newEntityColor}
+                  className="h-14 w-14 cursor-pointer"
+                  classNames={{
+                    input: "h-12 w-12 cursor-pointer",
+                    innerWrapper: "ml-1 cursor-pointer",
+                    inputWrapper: "h-14 w-14 p-0 cursor-pointer"
+                  }}
+                  radius="full"
+                />
+              </div>
               <div 
                 className="flex gap-4 items-center"
               >
