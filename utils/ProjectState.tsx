@@ -10,12 +10,32 @@ export interface Entity {
   status: Record<string, Record<number, string[]>>;
 }
 
+export interface Event {
+  id: number;
+  name: string;
+  summary: string;
+  startTime: string;
+  endTime: string;
+  involvedEntities: Record<number,string>;
+}
+
+export interface Chapter {
+  id: number;
+  name: string;
+  summary: string;
+  events: Array<number>;
+}
+
 export interface ProjectState {
   projectName: string;
   editingMode: boolean;
   entityTrackingId: number;
   entities: Record<number, Entity>;
   entityTypes: Array<string>;
+  eventTrackingId: number;
+  events: Record<number, Event>;
+  chapterTrackingId: number;
+  chapters: Record<number, Chapter>;
 }
 
 // Create new project
@@ -25,26 +45,57 @@ export const createNewProjectState = (newProjectName: string) => {
     editingMode: true,
     entityTrackingId: 0,
     entities: {},
-    entityTypes: []
+    entityTypes: [],
+    eventTrackingId: 0,
+    events: {},
+    chapterTrackingId: 0,
+    chapters: {}
   } as ProjectState;
 }
 
 // Verify if a object is project
-
 const instanceOfEntity = (object: any) => {
   const entityCheck =
     ("id" in object) && ("type" in object) && 
-    ("name" in object) && ("status" in object);
+    ("name" in object) && ("status" in object) && ("color" in object);
+  return entityCheck;
+};
+
+const instanceOfEvent = (object: any) => {
+  const entityCheck =
+    ("id" in object) && ("name" in object) && ("summary" in object) && 
+    ("startTime" in object) && ("endTime" in object) && ("involvedEntities" in object);
+  return entityCheck;
+};
+
+const instanceOfChapter= (object: any) => {
+  const entityCheck =
+    ("id" in object) && ("name" in object) && 
+    ("summary" in object) && ("events" in object);
   return entityCheck;
 };
 
 export const instanceOfProjectState = (object: any) => {
   const basicCheck = 
     ("projectName" in object) && ("editingMode" in object) && 
-    ("entityTrackingId" in object) && ("entities" in object);
+    ("entityTrackingId" in object) && ("entities" in object) && ("entityTypes" in object) &&
+    ("eventTrackingId" in object) && ("events" in object) && 
+    ("chapterTrackingId" in object) && ("chapters" in object);
 
   for (var entity in object.entities) {
     if (!instanceOfEntity(object.entities[entity])) {
+      return false;
+    }
+  }
+
+  for (var event in object.events) {
+    if (!instanceOfEvent(object.events[event])) {
+      return false;
+    }
+  }
+
+  for (var chapter in object.chapters) {
+    if (!instanceOfChapter(object.chapters[chapter])) {
       return false;
     }
   }
@@ -76,7 +127,11 @@ export const StateProvider = ({ children } : { children:any }) => {
     editingMode: false,
     entityTrackingId: 0,
     entities: {},
-    entityTypes: []
+    entityTypes: [],
+    eventTrackingId: 0,
+    events: {},
+    chapterTrackingId: 0,
+    chapters: {}
   });
 
   const setProjectName = (newProjectName: string) => {
