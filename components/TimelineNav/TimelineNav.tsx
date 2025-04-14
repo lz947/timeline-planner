@@ -239,6 +239,14 @@ const TimelineNav = ( props: NavbarProps ) => {
             {t("eventPageLink")}
           </Link>
         </NavbarItem>
+        <NavbarItem>
+          <Link 
+            color="foreground"
+            href="/debug"
+          >
+            Debug
+          </Link>
+        </NavbarItem>
       </NavbarContent>
       {/* Locale switch */}
       <NavbarContent justify="end">
