@@ -115,6 +115,14 @@ interface ProjectStateContextType {
   setEntityTypes: (newEntityTypes: Array<string>) => void;
   addEntityType: (newEntityType: string) => void;
   deleteEntityType: (id: number) => void;
+  setProjectEvents: (newProjectEvent: Record<number, Event>) => void;
+  addEvent: (newEvent: Event) => void;
+  editEvent: (id: number, newEvent: Event) => void;
+  deleteEvent: (id: number) => void;
+  setProjectChapter: (newProjectChapter: Record<number, Chapter>) => void;
+  addChapter: (newChapter: Chapter) => void;
+  editChapter: (id: number, newChapter: Chapter) => void;
+  deleteChapter: (id: number) => void;
 }
 
 // Define the context
@@ -208,13 +216,91 @@ export const StateProvider = ({ children } : { children:any }) => {
     }));0
   };
 
+  // Events
+  const setProjectEvents = (newProjectEvents: Record<number, Event>) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      events: newProjectEvents,
+    }));
+  };
+
+  const addEvent = (newEvent: Event) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      eventTrackingId: prevState.entityTrackingId + 1,
+      events: {
+        ...prevState.events,
+        [prevState.entityTrackingId]: newEvent,
+      },
+    }));
+  };
+
+  const editEvent = (id: number, newEvent: Event) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      events: {
+        ...prevState.events,
+        [id]: newEvent,
+      },
+    }));
+  };
+
+  const deleteEvent = (id: number) => {
+    setProjectState((prevState) => {
+      const newEvents = { ...prevState.events };
+      delete newEvents[id];
+
+      return { ...prevState, events: newEvents };
+    });
+  };
+
+  // Chapter
+  const setProjectChapter = (newProjectChapters: Record<number, Chapter>) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      chapters: newProjectChapters,
+    }));
+  };
+
+  const addChapter = (newChapter: Chapter) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      chapterTrackingId: prevState.entityTrackingId + 1,
+      chapters: {
+        ...prevState.chapters,
+        [prevState.entityTrackingId]: newChapter,
+      },
+    }));
+  };
+
+  const editChapter = (id: number, newChapter: Chapter) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      chapters: {
+        ...prevState.chapters,
+        [id]: newChapter,
+      },
+    }));
+  };
+
+  const deleteChapter = (id: number) => {
+    setProjectState((prevState) => {
+      const newChapters = { ...prevState.chapters };
+      delete newChapters[id];
+
+      return { ...prevState, chapters: newChapters };
+    });
+  };
+
   return (
     <StateContext.Provider 
       value={{ 
         projectState, setProjectState,
         setProjectName, setEditingMode,
         setProjectEntites, addEntity, editEntity, deleteEntity,
-        setEntityTypes, addEntityType, deleteEntityType
+        setEntityTypes, addEntityType, deleteEntityType,
+        setProjectEvents, addEvent, editEvent, deleteEvent,
+        setProjectChapter, addChapter, editChapter, deleteChapter,
       }}
     >
       {children}
