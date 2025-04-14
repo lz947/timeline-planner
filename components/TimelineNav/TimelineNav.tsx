@@ -244,7 +244,7 @@ const TimelineNav = ( props: NavbarProps ) => {
             color="foreground"
             href="/debug"
           >
-            Debug
+            {t("debugPageLink")}
           </Link>
         </NavbarItem>
       </NavbarContent>

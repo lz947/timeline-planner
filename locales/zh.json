@@ -9,7 +9,8 @@
     "chapterPageLink": "章节",
     "eventPageLink": "事件",
     "entityOverview": "实体总览",
-    "createNewEntity": "创建新实体"
+    "createNewEntity": "创建新实体",
+    "debugPageLink": "调试"
   },
   "NewProjectModal": {
     "defaultProjectName": "新项目",

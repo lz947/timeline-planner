@@ -9,7 +9,8 @@
     "chapterPageLink": "Chapters",
     "eventPageLink": "Events",
     "entityOverview": "Overview",
-    "createNewEntity": "Create new entity"
+    "createNewEntity": "Create new entity",
+    "debugPageLink": "Debug"
   },
   "NewProjectModal": {
     "defaultProjectName": "New Project",
