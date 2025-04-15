@@ -19,15 +19,15 @@ import { Entity, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
 import { getRandomColor } from "@/utils/misc";
 
-const NewEntityModal = ( props:  ModalProps ) => {
+const NewEventModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
   // States
   const { projectState, addEntity, addEntityType } = useProjectState();
-  const [newEntityNameInvalid, setNewEntityNameInvalid] = React.useState(false);
-  const [newEntityName, setNewEntityName] = React.useState(t("defaultEntityName"));
+  const [newEventNameInvalid, setNewEntityNameInvalid] = React.useState(false);
+  const [newEventName, setNewEntityName] = React.useState("New Event");
   const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
-  const [newEntityColor, setNewEntityColor] = React.useState(getRandomColor());
+  const [newEventColor, setNewEventColor] = React.useState(getRandomColor());
   const [newEntityStatusKeys, setNewEntityStatusKeys] = React.useState<string[]>([]);
   const [newEntityStatusValues, setNewEntityStatusValues] = React.useState<string[]>([]);
   const [newEntityStatusInvalidKeys, setNewEntityStatusInvalidKeys] = React.useState<boolean[]>([]);
@@ -45,8 +45,8 @@ const NewEntityModal = ( props:  ModalProps ) => {
     const newEntity = {
       id: projectState.entityTrackingId,
       type: newEntityType,
-      name: newEntityName,
-      color: newEntityColor,
+      name: newEventName,
+      color: newEventColor,
       status: {},
     } as Entity;
     // Add the status attributes use -1 as initial status
@@ -76,8 +76,8 @@ const NewEntityModal = ( props:  ModalProps ) => {
     }
   };
 
-  const onNewEntityColorChange = (e: any) => {
-    setNewEntityColor(e.target.value);
+  const onNewEventColorChange = (e: any) => {
+    setNewEventColor(e.target.value);
   }
 
   // Entity status
@@ -159,25 +159,25 @@ const NewEntityModal = ( props:  ModalProps ) => {
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">{t("header")}</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">New Event</ModalHeader>
             <ModalBody>
               <div 
                 className="flex gap-4 items-center"
               >
                 <Input
                   isRequired
-                  label={t("entityNameInputLabel")}
+                  label={"Event Name"}
                   type="text"
                   variant="underlined"
-                  value={newEntityName}
+                  value={newEventName}
                   onChange={onNewEntityNameChange}
-                  isInvalid={newEntityNameInvalid}
-                  errorMessage={t("entityNameInputError")}
+                  isInvalid={newEventNameInvalid}
+                  errorMessage={"Event name is required"}
                 />
                 <Input
                   type="color"
-                  onChange={onNewEntityColorChange}
-                  value={newEntityColor}
+                  onChange={onNewEventColorChange}
+                  value={newEventColor}
                   className="h-14 w-14 cursor-pointer"
                   classNames={{
                     input: "h-12 w-12 cursor-pointer",
@@ -282,7 +282,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
               <Button 
                 color="primary" 
                 isDisabled={
-                  newEntityNameInvalid || newEntityTypeInvalid || 
+                  newEventNameInvalid || newEntityTypeInvalid || 
                   newEntityStatusInvalidKeys.some(val => val === true) ||
                   newEntityStatusInvalidValues.some(val => val === true) ||
                   duplicatedStatusKeys.some(val => val === true)
@@ -299,4 +299,4 @@ const NewEntityModal = ( props:  ModalProps ) => {
   );
 }
 
-export default NewEntityModal;
+export default NewEventModal;

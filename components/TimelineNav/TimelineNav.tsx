@@ -29,6 +29,7 @@ import RenameProjectModal from "../Modals/RenameProjectModal";
 import { useRouter } from "next/navigation";
 import OpenProjectModal from "../Modals/OpenProjectModal";
 import NewEntityModal from "../Modals/NewEntityModal";
+import NewEventModal from "../Modals/NewEventModal";
 
 const TimelineNav = ( props: NavbarProps ) => {
   const router = useRouter();
@@ -49,6 +50,9 @@ const TimelineNav = ( props: NavbarProps ) => {
   // Entities state
   const [isEntityDropdownOpen, setIsEntityDropdownOpen] = React.useState(false);
   const [entityDropdownTimeoutId, setEntityDropdownTimeoutId] = React.useState<any>(null);
+  // Entities state
+  const [isEventDropdownOpen, setIsEventDropdownOpen] = React.useState(false);
+  const [eventDropdownTimeoutId, setEventDropdownTimeoutId] = React.useState<any>(null);
 
   // Locale states
   const [isLocalDropdownOpen, setIsLocalDropdownOpen] = React.useState(false);
@@ -78,6 +82,12 @@ const TimelineNav = ( props: NavbarProps ) => {
     isOpen: isNewEntityModalOpen, 
     onOpen: onNewEntityModalOpen, 
     onClose: onNewEntityModalClose 
+  } = useDisclosure();
+  // New Event Modal
+  const { 
+    isOpen: isNewEventModalOpen, 
+    onOpen: onNewEventModalOpen, 
+    onClose: onNewEventModalClose 
   } = useDisclosure();
 
   const switchLanguage = (selectedLocalSet: any) => {
@@ -231,13 +241,49 @@ const TimelineNav = ( props: NavbarProps ) => {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link 
-            color="foreground"
-            href="/events"
-            isDisabled={!projectState.editingMode}
-          >
-            {t("eventPageLink")}
-          </Link>
+          <Dropdown
+            isOpen={isEventDropdownOpen}>
+            <DropdownTrigger>
+              <Link 
+                color="foreground"
+                href="/events"
+                isDisabled={!projectState.editingMode}
+                onMouseEnter={() => {
+                  clearTimeout(eventDropdownTimeoutId);
+                  setIsEventDropdownOpen(true);
+                }}
+                onMouseLeave={() => {
+                  const id = setTimeout(() => setIsEventDropdownOpen(false), delay);
+                  setEventDropdownTimeoutId(id);
+                }}
+              >
+                {t("eventPageLink")}
+              </Link>
+            </DropdownTrigger>
+            <DropdownMenu 
+              variant="faded"
+              onMouseEnter={() => {
+                clearTimeout(eventDropdownTimeoutId);
+                setIsEventDropdownOpen(true);
+              }}
+              onMouseLeave={() => {
+                setIsEventDropdownOpen(false);
+              }}
+            >
+              <DropdownItem
+                key="eventOverview"
+                onPress={()=>{router.push("/events")}}
+              >
+                Event overview
+              </DropdownItem>
+              <DropdownItem
+                key="entityCreate"
+                onPress={onNewEventModalOpen}
+              >
+                Create new event
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
       </NavbarContent>
       {/* Locale switch */}
@@ -295,6 +341,9 @@ const TimelineNav = ( props: NavbarProps ) => {
       <NewEntityModal isOpen={isNewEntityModalOpen} onOpenChange={onNewEntityModalClose}>
         <></>
       </NewEntityModal>
+      <NewEventModal isOpen={isNewEventModalOpen} onOpenChange={onNewEventModalClose}>
+        <></>
+      </NewEventModal>
     </Navbar>
   );
 }
