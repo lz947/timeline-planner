@@ -78,7 +78,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
 
   const onNewEntityColorChange = (e: any) => {
     setNewEntityColor(e.target.value);
-  }
+  };
 
   // Entity status
   // Give a input array, return a array with same size where:

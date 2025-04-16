@@ -13,7 +13,8 @@ import {
   ModalProps,
   Autocomplete,
   AutocompleteItem,
-  Tooltip
+  Tooltip,
+  Textarea
 } from "@heroui/react";
 import { Entity, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
@@ -26,6 +27,10 @@ const NewEventModal = ( props:  ModalProps ) => {
   const [newEventNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [newEventName, setNewEntityName] = React.useState("New Event");
   const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
+  const [newEventSummary, setNewEventSummary] = React.useState("New Event");
+
+
+
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
   const [newEventColor, setNewEventColor] = React.useState(getRandomColor());
   const [newEntityStatusKeys, setNewEntityStatusKeys] = React.useState<string[]>([]);
@@ -76,9 +81,13 @@ const NewEventModal = ( props:  ModalProps ) => {
     }
   };
 
+  const onNewEventSummaryChange = (e: any) => {
+    setNewEventSummary(e.target.value);
+  };
+
   const onNewEventColorChange = (e: any) => {
     setNewEventColor(e.target.value);
-  }
+  };
 
   // Entity status
   // Give a input array, return a array with same size where:
@@ -187,6 +196,13 @@ const NewEventModal = ( props:  ModalProps ) => {
                   radius="full"
                 />
               </div>
+              <Textarea
+                variant="underlined"
+                label="Summary"
+                minRows={1}
+                value={newEventSummary}
+                onChange={onNewEventSummaryChange}
+              />
               <Autocomplete
                 isRequired
                 label={t("entityTypeInputLabel")}
