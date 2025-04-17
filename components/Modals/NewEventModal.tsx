@@ -44,6 +44,12 @@ const NewEventModal = ( props:  ModalProps ) => {
     setInvolvedEntityStatusValue([]);
   };
 
+  const onInvolvedEntitySelectionChange = (indexToChange: number, selectedEntityId: number) => {
+    var newInvolvedEntities = [...involvedEntities];
+    newInvolvedEntities[indexToChange] = selectedEntityId;
+    setInvolvedEntities(newInvolvedEntities);
+  };
+
 
 
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
@@ -58,23 +64,24 @@ const NewEventModal = ( props:  ModalProps ) => {
   // Create the new entity
   const createNewEntity = () => {
     // Check if it's a new entity type:
-    if (!projectState.entityTypes.includes(newEntityType)) {
-      addEntityType(newEntityType);
-    }
-    // create the new entity
-    const newEntity = {
-      id: projectState.entityTrackingId,
-      type: newEntityType,
-      name: newEventName,
-      color: newEventColor,
-      status: {},
-    } as Entity;
-    // Add the status attributes use -1 as initial status
-    newEntityStatusKeys.map((statusKey, index)=>{
-      newEntity.status[statusKey] = {};
-      newEntity.status[statusKey][-1] = ["INITIAL", newEntityStatusValues[index]];
-    });
-    addEntity(newEntity);
+    // if (!projectState.entityTypes.includes(newEntityType)) {
+    //   addEntityType(newEntityType);
+    // }
+    // // create the new entity
+    // const newEntity = {
+    //   id: projectState.entityTrackingId,
+    //   type: newEntityType,
+    //   name: newEventName,
+    //   color: newEventColor,
+    //   status: {},
+    // } as Entity;
+    // // Add the status attributes use -1 as initial status
+    // newEntityStatusKeys.map((statusKey, index)=>{
+    //   newEntity.status[statusKey] = {};
+    //   newEntity.status[statusKey][-1] = ["INITIAL", newEntityStatusValues[index]];
+    // });
+    // addEntity(newEntity);
+    console.log(involvedEntities);
   };
 
   // Entity Name, type, and color
@@ -247,7 +254,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                 </Tooltip>
               </div>
               <div>
-                {involvedEntities.map((entityId, index)=>(
+                {involvedEntities.map((_, index)=>(
                   <div 
                     className="flex gap-4 items-center"
                     key={index}
@@ -256,14 +263,16 @@ const NewEventModal = ( props:  ModalProps ) => {
                       isRequired
                       label={"Involved entity"}
                       variant="underlined"
-                      onSelectionChange={onNewEntityTypeChange}
+                      onSelectionChange={(selectedKey)=>{
+                        onInvolvedEntitySelectionChange(index, Number(selectedKey));
+                      }}
                       isInvalid={newEntityTypeInvalid}
                       errorMessage={"Please choose a entity"}
                     >
                       {
-                        Object.entries(projectState.entities).map(
-                          ([entityId, entity]) => (
-                            <AutocompleteItem key={entityId}>{entity.name}</AutocompleteItem>
+                        Object.keys(projectState.entities).map(Number).map(
+                          (entityId) => (
+                            <AutocompleteItem key={entityId}>{projectState.entities[entityId].name}</AutocompleteItem>
                           )
                         )
                       }
@@ -383,7 +392,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                   newEntityStatusInvalidValues.some(val => val === true) ||
                   duplicatedStatusKeys.some(val => val === true)
                 }
-                onPress={()=>{createNewEntity();onClose();}}
+                onPress={()=>{createNewEntity();}}
               >
                 {t("createButton")}
               </Button>
