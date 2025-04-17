@@ -28,6 +28,21 @@ const NewEventModal = ( props:  ModalProps ) => {
   const [newEventName, setNewEntityName] = React.useState("New Event");
   const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
   const [newEventSummary, setNewEventSummary] = React.useState("New Event");
+  const [involvedEntities, setInvolvedEntities] = React.useState<number[]>([]);
+  const [involvedEntityStatusKey, setInvolvedEntityStatusKey] = React.useState<string[]>([]);
+  const [involvedEntityStatusValue, setInvolvedEntityStatusValue] = React.useState<string[]>([]);
+
+  const addNewInvolvedEntity = () => {
+    setInvolvedEntities([...involvedEntities, -1]);
+    setInvolvedEntityStatusKey([...involvedEntityStatusKey, ""]);
+    setInvolvedEntityStatusValue([...involvedEntityStatusValue, ""]);
+  };
+
+  const removeAllInvolvedEntities = () => {
+    setInvolvedEntities([]);
+    setInvolvedEntityStatusKey([]);
+    setInvolvedEntityStatusValue([]);
+  };
 
 
 
@@ -203,6 +218,98 @@ const NewEventModal = ( props:  ModalProps ) => {
                 value={newEventSummary}
                 onChange={onNewEventSummaryChange}
               />
+              <div 
+                className="flex gap-4 items-center"
+              >
+                <Tooltip 
+                  showArrow={true}
+                  content={"Click to add a entity that is involved in this event."}
+                >
+                  <Button
+                    variant="bordered"
+                    size="sm"
+                    className="max-w-32"
+                    onPress={addNewInvolvedEntity}
+                  >Add involved entity</Button>
+                </Tooltip>
+                <Tooltip
+                  color="danger"
+                  showArrow={true}
+                  content={"Click to remove all involved entities."}
+                >
+                  <Button
+                    variant="bordered"
+                    size="sm"
+                    className="max-w-32"
+                    color="danger"
+                    onPress={removeAllInvolvedEntities}
+                  >Remove all entities</Button>
+                </Tooltip>
+              </div>
+              <div>
+                {involvedEntities.map((entityId, index)=>(
+                  <div 
+                    className="flex gap-4 items-center"
+                    key={index}
+                  >
+                    <Autocomplete
+                      isRequired
+                      label={"Involved entity"}
+                      variant="underlined"
+                      onSelectionChange={onNewEntityTypeChange}
+                      isInvalid={newEntityTypeInvalid}
+                      errorMessage={"Please choose a entity"}
+                    >
+                      {
+                        Object.entries(projectState.entities).map(
+                          ([entityId, entity]) => (
+                            <AutocompleteItem key={entityId}>{entity.name}</AutocompleteItem>
+                          )
+                        )
+                      }
+                    </Autocomplete>
+                    <Autocomplete
+                      isRequired
+                      label={t("entityTypeInputLabel")}
+                      variant="underlined"
+                      inputValue={newEntityType}
+                      onInputChange={onNewEntityTypeChange}
+                      isInvalid={newEntityTypeInvalid}
+                      errorMessage={t("entityTypeInputError")}
+                      allowsCustomValue
+                    >
+                      {
+                        projectState.entityTypes.map(
+                          (entityType, index) => (
+                            <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
+                          )
+                        )
+                      }
+                    </Autocomplete>
+                  
+                    <Button 
+                      isIconOnly
+                      variant="light"
+                      color="danger"
+                      className="min-w-6 min-h-6 w-6 h-6"
+                      onPress={()=>{removeOneStatusInputsByIndex(index);}}
+                    >
+                      <DeleteIcon 
+                        width={20}
+                        height={20}
+                      />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+
+
+
+
+
+
+
               <Autocomplete
                 isRequired
                 label={t("entityTypeInputLabel")}
@@ -221,34 +328,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                   )
                 }
               </Autocomplete>
-              <div 
-                className="flex gap-4 items-center"
-              >
-                <Tooltip 
-                  showArrow={true}
-                  content={t("addStatusToolTip")}
-                >
-                  <Button
-                    variant="bordered"
-                    size="sm"
-                    className="max-w-32"
-                    onPress={addNewStatusInputs}
-                  >{t("addStatusButton")}</Button>
-                </Tooltip>
-                <Tooltip
-                  color="danger"
-                  showArrow={true}
-                  content={t("removeStatusToolTip")}
-                >
-                  <Button
-                    variant="bordered"
-                    size="sm"
-                    className="max-w-32"
-                    color="danger"
-                    onPress={removeAllStatusInputs}
-                  >{t("removeStatusButton")}</Button>
-                </Tooltip>
-              </div>
+              
               <div>
                 {newEntityStatusKeys.map((statusKey, index)=>(
                   <div 
