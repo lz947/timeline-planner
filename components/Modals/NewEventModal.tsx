@@ -35,6 +35,7 @@ const NewEventModal = ( props:  ModalProps ) => {
   const addNewInvolvedEntity = () => {
     setInvolvedEntities([...involvedEntities, -1]);
     setInvolvedEntityStatusKey([...involvedEntityStatusKey, ""]);
+    setInvolvedEntityStatusKeyDisabled([...involvedEntityStatusKeyDisabed, true]);
     setInvolvedEntityStatusValue([...involvedEntityStatusValue, ""]);
   };
 
@@ -278,19 +279,14 @@ const NewEventModal = ( props:  ModalProps ) => {
                       }
                     </Autocomplete>
                     <Autocomplete
-                      isRequired
-                      label={t("entityTypeInputLabel")}
+                      label={"Entity status key"}
                       variant="underlined"
-                      inputValue={newEntityType}
-                      onInputChange={onNewEntityTypeChange}
-                      isInvalid={newEntityTypeInvalid}
-                      errorMessage={t("entityTypeInputError")}
-                      allowsCustomValue
+                      disabled={involvedEntityStatusKeyDisabed[index]}
                     >
                       {
-                        projectState.entityTypes.map(
-                          (entityType, index) => (
-                            <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
+                        Object.keys(projectState.entities[involvedEntities[index]].status).map(
+                          (statusKey) => (
+                            <AutocompleteItem key={statusKey}>{statusKey}</AutocompleteItem>
                           )
                         )
                       }
