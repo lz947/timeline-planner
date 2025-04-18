@@ -31,26 +31,75 @@ const NewEventModal = ( props:  ModalProps ) => {
   const [involvedEntities, setInvolvedEntities] = React.useState<number[]>([]);
   const [involvedEntityStatusKey, setInvolvedEntityStatusKey] = React.useState<string[]>([]);
   const [involvedEntityStatusValue, setInvolvedEntityStatusValue] = React.useState<string[]>([]);
+  const [availableInvolvedEntityStatusKey,setAvailableInvolvedEntityStatusKey] = React.useState<string[][]>([]);
+  const [involvedEntityStatusKeyDisabled, setInvolvedEntityStatusKeyDisabled] = React.useState<boolean[]>([]);
+  const [involvedEntityStatusValueDisabled, setInvolvedEntityStatusValueDisabled] = React.useState<boolean[]>([]);
+  const [involvedEntityStatusValueInvalid, setInvolvedEntityStatusValueInvalid] = React.useState<boolean[]>([]);
 
   const addNewInvolvedEntity = () => {
     setInvolvedEntities([...involvedEntities, -1]);
     setInvolvedEntityStatusKey([...involvedEntityStatusKey, ""]);
-    setInvolvedEntityStatusKeyDisabled([...involvedEntityStatusKeyDisabed, true]);
     setInvolvedEntityStatusValue([...involvedEntityStatusValue, ""]);
+    setAvailableInvolvedEntityStatusKey([...availableInvolvedEntityStatusKey, []]);
+    setInvolvedEntityStatusKeyDisabled([...involvedEntityStatusKeyDisabled, true]);
+    setInvolvedEntityStatusValueDisabled([...involvedEntityStatusValueDisabled, true]);
+    setInvolvedEntityStatusValueInvalid([...involvedEntityStatusValueDisabled, false]);
   };
 
   const removeAllInvolvedEntities = () => {
     setInvolvedEntities([]);
     setInvolvedEntityStatusKey([]);
     setInvolvedEntityStatusValue([]);
+    setAvailableInvolvedEntityStatusKey([]);
+    setInvolvedEntityStatusKeyDisabled([]);
+    setInvolvedEntityStatusValueDisabled([]);
+    setInvolvedEntityStatusValueInvalid([]);
   };
 
-  const onInvolvedEntitySelectionChange = (indexToChange: number, selectedEntityId: number) => {
+  const onInvolvedEntitySelectionChange = (selectedEntityId: number, indexToChange: number) => {
+    // Set selected entity
     var newInvolvedEntities = [...involvedEntities];
     newInvolvedEntities[indexToChange] = selectedEntityId;
     setInvolvedEntities(newInvolvedEntities);
+    // Prepare the auto complete for entity's status key
+    var newAvailableInvolvedEntityStatusKey = [...availableInvolvedEntityStatusKey];
+    newAvailableInvolvedEntityStatusKey[indexToChange] = Object.keys(projectState.entities[selectedEntityId].status);
+    setAvailableInvolvedEntityStatusKey(newAvailableInvolvedEntityStatusKey);
+    // Enable the status key autocomplete
+    var newInvolvedEntityStatusKeyDisabled = [...involvedEntityStatusKeyDisabled];
+    newInvolvedEntityStatusKeyDisabled[indexToChange] = false;
+    setInvolvedEntityStatusKeyDisabled(newInvolvedEntityStatusKeyDisabled);
   };
 
+  const onInvolvedEntityStatusKeyChange = (selectedEntityStatusKey: string, indexToChange: number) => {
+    // Set selected entity's status key
+    var newInvolvedEntityStatusKey = [...involvedEntityStatusKey];
+    newInvolvedEntityStatusKey[indexToChange] = selectedEntityStatusKey;
+    setInvolvedEntityStatusKey(newInvolvedEntityStatusKey);
+    // Enable the status value input
+    var newInvolvedEntityStatusValueDisabled = [...involvedEntityStatusValueDisabled];
+    newInvolvedEntityStatusValueDisabled[indexToChange] = false;
+    setInvolvedEntityStatusValueDisabled(newInvolvedEntityStatusValueDisabled);
+    // Set the new value to default text if it's empty string
+    if (involvedEntityStatusValue[indexToChange] == "") {
+      var newInvolvedEntityStatusValue = [...involvedEntityStatusValue];
+      newInvolvedEntityStatusValue[indexToChange] = "New status value"
+      setInvolvedEntityStatusValue(newInvolvedEntityStatusValue);
+    }
+  };
+
+  const onInvolvedEntityStatusValueChange = (e: any, indexToChange: number) => {
+    var newInvolvedEntityStatusValue = [...involvedEntityStatusValue];
+    newInvolvedEntityStatusValue[indexToChange] = e.target.value;
+    setInvolvedEntityStatusValue(newInvolvedEntityStatusValue);
+    var newInvolvedEntityStatusValueInvalid = [...involvedEntityStatusValueInvalid];
+    if (e.target.value == "") {
+      newInvolvedEntityStatusValueInvalid[indexToChange] = true;
+    } else {
+      newInvolvedEntityStatusValueInvalid[indexToChange] = false;
+    }
+    setInvolvedEntityStatusValueInvalid(newInvolvedEntityStatusValueInvalid);
+  };
 
 
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
@@ -265,7 +314,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                       label={"Involved entity"}
                       variant="underlined"
                       onSelectionChange={(selectedKey)=>{
-                        onInvolvedEntitySelectionChange(index, Number(selectedKey));
+                        onInvolvedEntitySelectionChange(Number(selectedKey), index);
                       }}
                       isInvalid={newEntityTypeInvalid}
                       errorMessage={"Please choose a entity"}
@@ -281,84 +330,28 @@ const NewEventModal = ( props:  ModalProps ) => {
                     <Autocomplete
                       label={"Entity status key"}
                       variant="underlined"
-                      disabled={involvedEntityStatusKeyDisabed[index]}
+                      isDisabled={involvedEntityStatusKeyDisabled[index]}
+                      onSelectionChange={(selectedKey)=>{
+                        onInvolvedEntityStatusKeyChange(String(selectedKey), index);
+                      }}
                     >
                       {
-                        Object.keys(projectState.entities[involvedEntities[index]].status).map(
+                        availableInvolvedEntityStatusKey[index].map(
                           (statusKey) => (
                             <AutocompleteItem key={statusKey}>{statusKey}</AutocompleteItem>
                           )
                         )
                       }
                     </Autocomplete>
-                  
-                    <Button 
-                      isIconOnly
-                      variant="light"
-                      color="danger"
-                      className="min-w-6 min-h-6 w-6 h-6"
-                      onPress={()=>{removeOneStatusInputsByIndex(index);}}
-                    >
-                      <DeleteIcon 
-                        width={20}
-                        height={20}
-                      />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-
-
-
-
-
-
-
-
-              <Autocomplete
-                isRequired
-                label={t("entityTypeInputLabel")}
-                variant="underlined"
-                inputValue={newEntityType}
-                onInputChange={onNewEntityTypeChange}
-                isInvalid={newEntityTypeInvalid}
-                errorMessage={t("entityTypeInputError")}
-                allowsCustomValue
-              >
-                {
-                  projectState.entityTypes.map(
-                    (entityType, index) => (
-                      <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
-                    )
-                  )
-                }
-              </Autocomplete>
-              
-              <div>
-                {newEntityStatusKeys.map((statusKey, index)=>(
-                  <div 
-                    className="flex gap-4 items-center"
-                    key={index}
-                  >
                     <Input
-                      isRequired
-                      label={t("statusKeyLabel")}
-                      type="text"
-                      variant="underlined"
-                      value={statusKey}
-                      onChange={(e)=>{onNewEntityStatusKeyChange(e,index)}}
-                      isInvalid={newEntityStatusInvalidKeys[index] || duplicatedStatusKeys[index]}
-                      errorMessage={t("statusKeyError")}
-                    />
-                    <Input
-                      isRequired
                       label={t("statusValueLabel")}
                       type="text"
                       variant="underlined"
-                      value={newEntityStatusValues[index]}
-                      onChange={(e)=>{onNewEntityStatusValueChange(e,index)}}
-                      isInvalid={newEntityStatusInvalidValues[index]}
-                      errorMessage={t("statusValueError")}
+                      isDisabled={involvedEntityStatusValueDisabled[index]}
+                      value={involvedEntityStatusValue[index]}
+                      onChange={(e)=>{onInvolvedEntityStatusValueChange(e,index)}}
+                      isInvalid={involvedEntityStatusValueInvalid[index]}
+                      errorMessage="Please enter the updated status value."
                     />
                     <Button 
                       isIconOnly
