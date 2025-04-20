@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react";
+import type { DateValue } from "@react-types/datepicker";
 import { useTranslations } from "next-intl";
 import { 
   Button,
@@ -14,20 +15,39 @@ import {
   Autocomplete,
   AutocompleteItem,
   Tooltip,
-  Textarea
+  Textarea,
+  DatePicker
 } from "@heroui/react";
 import { Entity, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
 import { getRandomColor } from "@/utils/misc";
+import { parseAbsolute } from "@internationalized/date";
 
 const NewEventModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
   // States
   const { projectState, addEntity, addEntityType } = useProjectState();
+  // Event 
   const [newEventNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [newEventName, setNewEntityName] = React.useState("New Event");
-  const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
   const [newEventSummary, setNewEventSummary] = React.useState("New Event");
+  const [newEventStartTime, setNewEventStartTime] = React.useState<DateValue | null>(
+    parseAbsolute("2025-01-01T00:00:00.000Z", 'UTC')
+  );
+  const [newEventEndTime, setNewEventEndTime] = React.useState<DateValue | null>(
+    parseAbsolute("2025-01-01T12:00:00.000Z", 'UTC')
+  );
+
+  const onStartTimeChange = (e: any) => {
+    console.log(e);
+    setNewEventStartTime(e);
+  };
+
+  const onEndTimeChange = (e: any) => {
+    setNewEventEndTime(e);
+  };
+
+  // Status Changes
   const [involvedEntities, setInvolvedEntities] = React.useState<number[]>([]);
   const [involvedEntityStatusKey, setInvolvedEntityStatusKey] = React.useState<string[]>([]);
   const [involvedEntityStatusValue, setInvolvedEntityStatusValue] = React.useState<string[]>([]);
@@ -63,7 +83,7 @@ const NewEventModal = ( props:  ModalProps ) => {
     setInvolvedEntities(newInvolvedEntities);
     // Prepare the auto complete for entity's status key
     var newAvailableInvolvedEntityStatusKey = [...availableInvolvedEntityStatusKey];
-    newAvailableInvolvedEntityStatusKey[indexToChange] = Object.keys(projectState.entities[selectedEntityId].status);
+    newAvailableInvolvedEntityStatusKey[indexToChange] = projectState.entities[selectedEntityId].statusKeys;
     setAvailableInvolvedEntityStatusKey(newAvailableInvolvedEntityStatusKey);
     // Enable the status key autocomplete
     var newInvolvedEntityStatusKeyDisabled = [...involvedEntityStatusKeyDisabled];
@@ -141,15 +161,6 @@ const NewEventModal = ( props:  ModalProps ) => {
       setNewEntityNameInvalid(true);
     } else {
       setNewEntityNameInvalid(false);
-    }
-  };
-
-  const onNewEntityTypeChange = (e: any) => {
-    setNewEntityType(e);
-    if (e == "") {
-      setNewEntityTypeInvalid(true);
-    } else {
-      setNewEntityTypeInvalid(false);
     }
   };
 
@@ -234,7 +245,7 @@ const NewEventModal = ( props:  ModalProps ) => {
 
   return (
     <Modal 
-      size="xl"
+      size="3xl"
       {...props}
     >
       <ModalContent>
@@ -245,36 +256,66 @@ const NewEventModal = ( props:  ModalProps ) => {
               <div 
                 className="flex gap-4 items-center"
               >
-                <Input
-                  isRequired
-                  label={"Event Name"}
-                  type="text"
-                  variant="underlined"
-                  value={newEventName}
-                  onChange={onNewEntityNameChange}
-                  isInvalid={newEventNameInvalid}
-                  errorMessage={"Event name is required"}
-                />
-                <Input
-                  type="color"
-                  onChange={onNewEventColorChange}
-                  value={newEventColor}
-                  className="h-14 w-14 cursor-pointer"
-                  classNames={{
-                    input: "h-12 w-12 cursor-pointer",
-                    innerWrapper: "ml-1 cursor-pointer",
-                    inputWrapper: "h-14 w-14 p-0 cursor-pointer"
-                  }}
-                  radius="full"
-                />
-              </div>
+                <div className="w-2/3">
+                  <div 
+                    className="flex gap-4 items-center"
+                  >
+                    <Input
+                      isRequired
+                      label={"Event Name"}
+                      type="text"
+                      variant="underlined"
+                      value={newEventName}
+                      onChange={onNewEntityNameChange}
+                      isInvalid={newEventNameInvalid}
+                      errorMessage={"Event name is required"}
+                    />
+                    <Input
+                      type="color"
+                      onChange={onNewEventColorChange}
+                      value={newEventColor}
+                      className="h-14 w-14 cursor-pointer"
+                      classNames={{
+                        input: "h-12 w-12 cursor-pointer",
+                        innerWrapper: "ml-1 cursor-pointer",
+                        inputWrapper: "h-14 w-14 p-0 cursor-pointer"
+                      }}
+                      radius="full"
+                    />
+                  </div>
+                  <DatePicker
+                    hideTimeZone
+                    showMonthAndYearPickers
+                    label="Event Start Date"
+                    variant="underlined"
+                    granularity="second"
+                    hourCycle={24}
+                    value={newEventStartTime}
+                    onChange={onStartTimeChange}
+                  />
+                  <DatePicker
+                    hideTimeZone
+                    showMonthAndYearPickers
+                    label="Event End Date"
+                    variant="underlined"
+                    granularity="second"
+                    hourCycle={24}
+                    value={newEventEndTime}
+                    onChange={onEndTimeChange}
+                  />
+                </div>
+               
               <Textarea
                 variant="underlined"
                 label="Summary"
-                minRows={1}
+                minRows={3}
+                maxRows={6}
                 value={newEventSummary}
                 onChange={onNewEventSummaryChange}
               />
+                
+              </div>
+             
               <div 
                 className="flex gap-4 items-center"
               >
@@ -316,8 +357,8 @@ const NewEventModal = ( props:  ModalProps ) => {
                       onSelectionChange={(selectedKey)=>{
                         onInvolvedEntitySelectionChange(Number(selectedKey), index);
                       }}
-                      isInvalid={newEntityTypeInvalid}
-                      errorMessage={"Please choose a entity"}
+                      // isInvalid={newEntityTypeInvalid}
+                      // errorMessage={"Please choose a entity"}
                     >
                       {
                         Object.keys(projectState.entities).map(Number).map(
@@ -376,7 +417,7 @@ const NewEventModal = ( props:  ModalProps ) => {
               <Button 
                 color="primary" 
                 isDisabled={
-                  newEventNameInvalid || newEntityTypeInvalid || 
+                  newEventNameInvalid ||
                   newEntityStatusInvalidKeys.some(val => val === true) ||
                   newEntityStatusInvalidValues.some(val => val === true) ||
                   duplicatedStatusKeys.some(val => val === true)
