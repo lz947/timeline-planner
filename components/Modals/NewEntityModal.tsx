@@ -61,7 +61,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
         id: currentStatusChangeTrackingId+index,
         eventId: -1,
         entityId: projectState.entityTrackingId,
-        time: "-1",
+        time: -1,
         statusKey: statusKey,
         statusValue: newEntityStatusValues[index],
         description: "INITIAL",

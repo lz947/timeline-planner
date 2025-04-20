@@ -15,8 +15,8 @@ export interface Event {
   id: number;
   name: string;
   summary: string;
-  startTime: string;
-  endTime: string;
+  startTime: number;
+  endTime: number;
   statusChange: number[];
 }
 
@@ -24,7 +24,7 @@ export interface StatusChange {
   id: number;
   eventId: number;
   entityId: number;
-  time: string;
+  time: number;
   statusKey: string;
   statusValue: String;
   description: string;
