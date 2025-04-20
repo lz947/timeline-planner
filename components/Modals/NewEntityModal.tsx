@@ -15,19 +15,21 @@ import {
   AutocompleteItem,
   Tooltip
 } from "@heroui/react";
-import { Entity, useProjectState } from "@/utils/ProjectState";
+import { Entity, StatusChange, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
 import { getRandomColor } from "@/utils/misc";
 
 const NewEntityModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
   // States
-  const { projectState, addEntity, addEntityType } = useProjectState();
+  // Entity
+  const { projectState, addEntity, addEntityType, addStatusChange } = useProjectState();
   const [newEntityNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [newEntityName, setNewEntityName] = React.useState(t("defaultEntityName"));
   const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
   const [newEntityColor, setNewEntityColor] = React.useState(getRandomColor());
+  // StatusChanges
   const [newEntityStatusKeys, setNewEntityStatusKeys] = React.useState<string[]>([]);
   const [newEntityStatusValues, setNewEntityStatusValues] = React.useState<string[]>([]);
   const [newEntityStatusInvalidKeys, setNewEntityStatusInvalidKeys] = React.useState<boolean[]>([]);
@@ -47,12 +49,24 @@ const NewEntityModal = ( props:  ModalProps ) => {
       type: newEntityType,
       name: newEntityName,
       color: newEntityColor,
-      status: {},
+      statusKeys: [],
+      statusChanges: []
     } as Entity;
-    // Add the status attributes use -1 as initial status
+    // Add the statusChanges one by one, and -1 for initial time
+    const currentStatusChangeTrackingId = projectState.statusChangeTrackingId
     newEntityStatusKeys.map((statusKey, index)=>{
-      newEntity.status[statusKey] = {};
-      newEntity.status[statusKey][-1] = ["INITIAL", newEntityStatusValues[index]];
+      newEntity.statusKeys.push(statusKey);
+      newEntity.statusChanges.push(currentStatusChangeTrackingId+index);
+      const newStatusChange = {
+        id: currentStatusChangeTrackingId+index,
+        eventId: -1,
+        entityId: projectState.entityTrackingId,
+        time: "-1",
+        statusKey: statusKey,
+        statusValue: newEntityStatusValues[index],
+        description: "INITIAL",
+      } as StatusChange;
+      addStatusChange(newStatusChange);
     });
     addEntity(newEntity);
   };
