@@ -28,52 +28,62 @@ const NewEventModal = ( props:  ModalProps ) => {
   // States
   const { projectState, addEntity, addEntityType } = useProjectState();
   // Event 
-  const [newEventNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [newEventName, setNewEntityName] = React.useState("New Event");
   const [newEventSummary, setNewEventSummary] = React.useState("New Event");
-  const [newEventStartTime, setNewEventStartTime] = React.useState<DateValue | null>(
-    parseAbsolute("2025-01-01T00:00:00.000Z", 'UTC')
-  );
-  const [newEventEndTime, setNewEventEndTime] = React.useState<DateValue | null>(
-    parseAbsolute("2025-01-01T12:00:00.000Z", 'UTC')
-  );
+  const [newEventStartTime, setNewEventStartTime] = React.useState<DateValue | null>(parseAbsolute("2025-01-01T00:00:00.000Z", 'UTC'));
+  const [newEventEndTime, setNewEventEndTime] = React.useState<DateValue | null>(parseAbsolute("2025-01-01T12:00:00.000Z", 'UTC'));
+  const [newEventNameInvalid, setNewEntityNameInvalid] = React.useState(false);
+  const [startDateInvalid, setStartDateInvalid] = React.useState(false);
+  const [endDateInvalid, setEndDateInvalid] = React.useState(false);
 
   const onStartTimeChange = (e: any) => {
-    console.log(e);
     setNewEventStartTime(e);
+    if (e == null) {
+      setStartDateInvalid(true);
+    } else {
+      setStartDateInvalid(false);
+    }
   };
 
   const onEndTimeChange = (e: any) => {
     setNewEventEndTime(e);
+    if (e == null) {
+      setEndDateInvalid(true);
+    } else {
+      setEndDateInvalid(false);
+    }
   };
 
   // Status Changes
   const [involvedEntities, setInvolvedEntities] = React.useState<number[]>([]);
-  const [involvedEntityStatusKey, setInvolvedEntityStatusKey] = React.useState<string[]>([]);
-  const [involvedEntityStatusValue, setInvolvedEntityStatusValue] = React.useState<string[]>([]);
-  const [availableInvolvedEntityStatusKey,setAvailableInvolvedEntityStatusKey] = React.useState<string[][]>([]);
-  const [involvedEntityStatusKeyDisabled, setInvolvedEntityStatusKeyDisabled] = React.useState<boolean[]>([]);
-  const [involvedEntityStatusValueDisabled, setInvolvedEntityStatusValueDisabled] = React.useState<boolean[]>([]);
-  const [involvedEntityStatusValueInvalid, setInvolvedEntityStatusValueInvalid] = React.useState<boolean[]>([]);
+  const [statusChangeKeys, setStatusChangeKeys] = React.useState<string[]>([]);
+  const [statusChangeValues, setStatusChangeValues] = React.useState<string[]>([]);
+  const [availableStatusChangeKeys,setAvailableStatusChangeKeys] = React.useState<string[][]>([]);
+  const [statusChangeKeysDisabled, setStatusChangeKeysDisabled] = React.useState<boolean[]>([]);
+  const [statusChangeValuesDisabled, setStatusChangeValuesDisabled] = React.useState<boolean[]>([]);
+  const [statusChangeKeysInvalid, setStatusChangeKeysInvalid] = React.useState<boolean[]>([]);
+  const [statusChangeValuesInvalid, setStatusChangeValuesInvalid] = React.useState<boolean[]>([]);
 
   const addNewInvolvedEntity = () => {
     setInvolvedEntities([...involvedEntities, -1]);
-    setInvolvedEntityStatusKey([...involvedEntityStatusKey, ""]);
-    setInvolvedEntityStatusValue([...involvedEntityStatusValue, ""]);
-    setAvailableInvolvedEntityStatusKey([...availableInvolvedEntityStatusKey, []]);
-    setInvolvedEntityStatusKeyDisabled([...involvedEntityStatusKeyDisabled, true]);
-    setInvolvedEntityStatusValueDisabled([...involvedEntityStatusValueDisabled, true]);
-    setInvolvedEntityStatusValueInvalid([...involvedEntityStatusValueDisabled, false]);
+    setStatusChangeKeys([...statusChangeKeys, ""]);
+    setStatusChangeValues([...statusChangeValues, ""]);
+    setAvailableStatusChangeKeys([...availableStatusChangeKeys, []]);
+    setStatusChangeKeysDisabled([...statusChangeKeysDisabled, true]);
+    setStatusChangeValuesDisabled([...statusChangeValuesDisabled, true]);
+    setStatusChangeKeysInvalid([...statusChangeKeysInvalid, false]);
+    setStatusChangeValuesInvalid([...statusChangeValuesDisabled, false]);
   };
 
   const removeAllInvolvedEntities = () => {
     setInvolvedEntities([]);
-    setInvolvedEntityStatusKey([]);
-    setInvolvedEntityStatusValue([]);
-    setAvailableInvolvedEntityStatusKey([]);
-    setInvolvedEntityStatusKeyDisabled([]);
-    setInvolvedEntityStatusValueDisabled([]);
-    setInvolvedEntityStatusValueInvalid([]);
+    setStatusChangeKeys([]);
+    setStatusChangeValues([]);
+    setAvailableStatusChangeKeys([]);
+    setStatusChangeKeysDisabled([]);
+    setStatusChangeValuesDisabled([]);
+    setStatusChangeKeysInvalid([]);
+    setStatusChangeValuesInvalid([]);
   };
 
   const onInvolvedEntitySelectionChange = (selectedEntityId: number, indexToChange: number) => {
@@ -82,43 +92,43 @@ const NewEventModal = ( props:  ModalProps ) => {
     newInvolvedEntities[indexToChange] = selectedEntityId;
     setInvolvedEntities(newInvolvedEntities);
     // Prepare the auto complete for entity's status key
-    var newAvailableInvolvedEntityStatusKey = [...availableInvolvedEntityStatusKey];
-    newAvailableInvolvedEntityStatusKey[indexToChange] = projectState.entities[selectedEntityId].statusKeys;
-    setAvailableInvolvedEntityStatusKey(newAvailableInvolvedEntityStatusKey);
+    var newAvailableStatusChangeKeys = [...availableStatusChangeKeys];
+    newAvailableStatusChangeKeys[indexToChange] = projectState.entities[selectedEntityId].statusKeys;
+    setAvailableStatusChangeKeys(newAvailableStatusChangeKeys);
     // Enable the status key autocomplete
-    var newInvolvedEntityStatusKeyDisabled = [...involvedEntityStatusKeyDisabled];
-    newInvolvedEntityStatusKeyDisabled[indexToChange] = false;
-    setInvolvedEntityStatusKeyDisabled(newInvolvedEntityStatusKeyDisabled);
+    var newStatusChangeKeysDisabled = [...statusChangeKeysDisabled];
+    newStatusChangeKeysDisabled[indexToChange] = false;
+    setStatusChangeKeysDisabled(newStatusChangeKeysDisabled);
   };
 
-  const onInvolvedEntityStatusKeyChange = (selectedEntityStatusKey: string, indexToChange: number) => {
+  const onStatusChangeKeysChange = (selectedEntityStatusKey: string, indexToChange: number) => {
     // Set selected entity's status key
-    var newInvolvedEntityStatusKey = [...involvedEntityStatusKey];
-    newInvolvedEntityStatusKey[indexToChange] = selectedEntityStatusKey;
-    setInvolvedEntityStatusKey(newInvolvedEntityStatusKey);
+    var newStatusChangeKeys = [...statusChangeKeys];
+    newStatusChangeKeys[indexToChange] = selectedEntityStatusKey;
+    setStatusChangeKeys(newStatusChangeKeys);
     // Enable the status value input
-    var newInvolvedEntityStatusValueDisabled = [...involvedEntityStatusValueDisabled];
-    newInvolvedEntityStatusValueDisabled[indexToChange] = false;
-    setInvolvedEntityStatusValueDisabled(newInvolvedEntityStatusValueDisabled);
+    var newStatusChangeValuesDisabled = [...statusChangeValuesDisabled];
+    newStatusChangeValuesDisabled[indexToChange] = false;
+    setStatusChangeValuesDisabled(newStatusChangeValuesDisabled);
     // Set the new value to default text if it's empty string
-    if (involvedEntityStatusValue[indexToChange] == "") {
-      var newInvolvedEntityStatusValue = [...involvedEntityStatusValue];
-      newInvolvedEntityStatusValue[indexToChange] = "New status value"
-      setInvolvedEntityStatusValue(newInvolvedEntityStatusValue);
+    if (statusChangeValues[indexToChange] == "") {
+      var newStatusChangeValues = [...statusChangeValues];
+      newStatusChangeValues[indexToChange] = "New status value"
+      setStatusChangeValues(newStatusChangeValues);
     }
   };
 
-  const onInvolvedEntityStatusValueChange = (e: any, indexToChange: number) => {
-    var newInvolvedEntityStatusValue = [...involvedEntityStatusValue];
-    newInvolvedEntityStatusValue[indexToChange] = e.target.value;
-    setInvolvedEntityStatusValue(newInvolvedEntityStatusValue);
-    var newInvolvedEntityStatusValueInvalid = [...involvedEntityStatusValueInvalid];
+  const onStatusChangeValuesChange = (e: any, indexToChange: number) => {
+    var newStatusChangeValues = [...statusChangeValues];
+    newStatusChangeValues[indexToChange] = e.target.value;
+    setStatusChangeValues(newStatusChangeValues);
+    var newStatusChangeValuesInvalid = [...statusChangeValuesInvalid];
     if (e.target.value == "") {
-      newInvolvedEntityStatusValueInvalid[indexToChange] = true;
+      newStatusChangeValuesInvalid[indexToChange] = true;
     } else {
-      newInvolvedEntityStatusValueInvalid[indexToChange] = false;
+      newStatusChangeValuesInvalid[indexToChange] = false;
     }
-    setInvolvedEntityStatusValueInvalid(newInvolvedEntityStatusValueInvalid);
+    setStatusChangeValuesInvalid(newStatusChangeValuesInvalid);
   };
 
 
@@ -256,7 +266,7 @@ const NewEventModal = ( props:  ModalProps ) => {
               <div 
                 className="flex gap-4 items-center"
               >
-                <div className="w-2/3">
+                <div className="w-full">
                   <div 
                     className="flex gap-4 items-center"
                   >
@@ -284,6 +294,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                     />
                   </div>
                   <DatePicker
+                    isRequired
                     hideTimeZone
                     showMonthAndYearPickers
                     label="Event Start Date"
@@ -292,8 +303,11 @@ const NewEventModal = ( props:  ModalProps ) => {
                     hourCycle={24}
                     value={newEventStartTime}
                     onChange={onStartTimeChange}
+                    isInvalid={startDateInvalid}
+                    errorMessage={"Start date is required"}
                   />
                   <DatePicker
+                    isRequired
                     hideTimeZone
                     showMonthAndYearPickers
                     label="Event End Date"
@@ -302,20 +316,19 @@ const NewEventModal = ( props:  ModalProps ) => {
                     hourCycle={24}
                     value={newEventEndTime}
                     onChange={onEndTimeChange}
+                    isInvalid={endDateInvalid}
+                    errorMessage={"End date is required"}
                   />
                 </div>
-               
-              <Textarea
-                variant="underlined"
-                label="Summary"
-                minRows={3}
-                maxRows={6}
-                value={newEventSummary}
-                onChange={onNewEventSummaryChange}
-              />
-                
+                <Textarea
+                  variant="underlined"
+                  label="Summary"
+                  minRows={3}
+                  maxRows={6}
+                  value={newEventSummary}
+                  onChange={onNewEventSummaryChange}
+                />
               </div>
-             
               <div 
                 className="flex gap-4 items-center"
               >
@@ -350,50 +363,69 @@ const NewEventModal = ( props:  ModalProps ) => {
                     className="flex gap-4 items-center"
                     key={index}
                   >
-                    <Autocomplete
-                      isRequired
-                      label={"Involved entity"}
-                      variant="underlined"
-                      onSelectionChange={(selectedKey)=>{
-                        onInvolvedEntitySelectionChange(Number(selectedKey), index);
-                      }}
-                      // isInvalid={newEntityTypeInvalid}
-                      // errorMessage={"Please choose a entity"}
-                    >
-                      {
-                        Object.keys(projectState.entities).map(Number).map(
-                          (entityId) => (
-                            <AutocompleteItem key={entityId}>{projectState.entities[entityId].name}</AutocompleteItem>
-                          )
-                        )
-                      }
-                    </Autocomplete>
-                    <Autocomplete
-                      label={"Entity status key"}
-                      variant="underlined"
-                      isDisabled={involvedEntityStatusKeyDisabled[index]}
-                      onSelectionChange={(selectedKey)=>{
-                        onInvolvedEntityStatusKeyChange(String(selectedKey), index);
-                      }}
-                    >
-                      {
-                        availableInvolvedEntityStatusKey[index].map(
-                          (statusKey) => (
-                            <AutocompleteItem key={statusKey}>{statusKey}</AutocompleteItem>
-                          )
-                        )
-                      }
-                    </Autocomplete>
-                    <Input
-                      label={t("statusValueLabel")}
-                      type="text"
-                      variant="underlined"
-                      isDisabled={involvedEntityStatusValueDisabled[index]}
-                      value={involvedEntityStatusValue[index]}
-                      onChange={(e)=>{onInvolvedEntityStatusValueChange(e,index)}}
-                      isInvalid={involvedEntityStatusValueInvalid[index]}
-                      errorMessage="Please enter the updated status value."
-                    />
+                    <div>
+                      <div className="flex gap-4 items-center">
+                        <Autocomplete
+                          isRequired
+                          label={"Involved entity"}
+                          variant="underlined"
+                          onSelectionChange={(selectedKey)=>{
+                            onInvolvedEntitySelectionChange(Number(selectedKey), index);
+                          }}
+                          // isInvalid={newEntityTypeInvalid}
+                          // errorMessage={"Please choose a entity"}
+                        >
+                          {
+                            Object.keys(projectState.entities).map(Number).map(
+                              (entityId) => (
+                                <AutocompleteItem key={entityId}>{projectState.entities[entityId].name}</AutocompleteItem>
+                              )
+                            )
+                          }
+                        </Autocomplete>
+                        <Autocomplete
+                          label={"Entity status key"}
+                          variant="underlined"
+                          isDisabled={statusChangeKeysDisabled[index]}
+                          onSelectionChange={(selectedKey)=>{
+                            onStatusChangeKeysChange(String(selectedKey), index);
+                          }}
+                        >
+                          {
+                            availableStatusChangeKeys[index].map(
+                              (statusKey) => (
+                                <AutocompleteItem key={statusKey}>{statusKey}</AutocompleteItem>
+                              )
+                            )
+                          }
+                        </Autocomplete>
+                        <Input
+                          label={t("statusValueLabel")}
+                          type="text"
+                          variant="underlined"
+                          isDisabled={statusChangeValuesDisabled[index]}
+                          value={statusChangeValues[index]}
+                          onChange={(e)=>{onStatusChangeValuesChange(e,index)}}
+                          isInvalid={statusChangeValuesInvalid[index]}
+                          errorMessage="Please enter the updated status value."
+                        />
+                      </div>
+                      <div className="flex gap-4 items-center">
+                        <DatePicker
+                          className=""
+                          isRequired
+                          hideTimeZone
+                          showMonthAndYearPickers
+                          label="Event End Date"
+                          variant="underlined"
+                          granularity="second"
+                          hourCycle={24}
+                          onChange={onEndTimeChange}
+                          isInvalid={endDateInvalid}
+                          errorMessage={"End date is required"}
+                        />
+                      </div>
+                    </div>
                     <Button 
                       isIconOnly
                       variant="light"
