@@ -18,23 +18,39 @@ import {
   Textarea,
   DatePicker
 } from "@heroui/react";
-import { Entity, useProjectState } from "@/utils/ProjectState";
+import { Event, StatusChange, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
 import { getRandomColor } from "@/utils/misc";
 import { parseAbsolute } from "@internationalized/date";
+import { getProjectTime } from "@/utils/projectTime";
 
 const NewEventModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
   // States
-  const { projectState, addEntity, addEntityType } = useProjectState();
+  const { projectState, addEvent, addStatusChange } = useProjectState();
   // Event 
   const [newEventName, setNewEntityName] = React.useState("New Event");
-  const [newEventSummary, setNewEventSummary] = React.useState("New Event");
+  const [newEventColor, setNewEventColor] = React.useState(getRandomColor());
   const [newEventStartTime, setNewEventStartTime] = React.useState<DateValue | null>(parseAbsolute("2025-01-01T00:00:00.000Z", 'UTC'));
   const [newEventEndTime, setNewEventEndTime] = React.useState<DateValue | null>(parseAbsolute("2025-01-01T12:00:00.000Z", 'UTC'));
+  const [newEventSummary, setNewEventSummary] = React.useState("New Event");
   const [newEventNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [startDateInvalid, setStartDateInvalid] = React.useState(false);
   const [endDateInvalid, setEndDateInvalid] = React.useState(false);
+
+  // Entity Name, type, and color
+  const onNewEntityNameChange = (e: any) => {
+    setNewEntityName(e.target.value);
+    if (e.target.value == "") {
+      setNewEntityNameInvalid(true);
+    } else {
+      setNewEntityNameInvalid(false);
+    }
+  };
+
+  const onNewEventColorChange = (e: any) => {
+    setNewEventColor(e.target.value);
+  };
 
   const onStartTimeChange = (e: any) => {
     setNewEventStartTime(e);
@@ -54,36 +70,75 @@ const NewEventModal = ( props:  ModalProps ) => {
     }
   };
 
+  const onNewEventSummaryChange = (e: any) => {
+    setNewEventSummary(e.target.value);
+  };
+
   // Status Changes
+  // Values
   const [involvedEntities, setInvolvedEntities] = React.useState<number[]>([]);
   const [statusChangeKeys, setStatusChangeKeys] = React.useState<string[]>([]);
   const [statusChangeValues, setStatusChangeValues] = React.useState<string[]>([]);
   const [availableStatusChangeKeys,setAvailableStatusChangeKeys] = React.useState<string[][]>([]);
+  const [statusChangeTime, setStatusChangeTime] = React.useState<(DateValue | null)[]>([]);
+  const [statusChangeDescriptions, setStatusChangeDescriptions] = React.useState<string[]>([]);
+  // Disabled fields
   const [statusChangeKeysDisabled, setStatusChangeKeysDisabled] = React.useState<boolean[]>([]);
   const [statusChangeValuesDisabled, setStatusChangeValuesDisabled] = React.useState<boolean[]>([]);
+  // Invalid fields
   const [statusChangeKeysInvalid, setStatusChangeKeysInvalid] = React.useState<boolean[]>([]);
   const [statusChangeValuesInvalid, setStatusChangeValuesInvalid] = React.useState<boolean[]>([]);
+  const [statusChangeTimeInvalid, setStatusChangeTimeInvalid] = React.useState<boolean[]>([]);
 
   const addNewInvolvedEntity = () => {
+    // Values
     setInvolvedEntities([...involvedEntities, -1]);
     setStatusChangeKeys([...statusChangeKeys, ""]);
     setStatusChangeValues([...statusChangeValues, ""]);
     setAvailableStatusChangeKeys([...availableStatusChangeKeys, []]);
+    setStatusChangeTime([...statusChangeTime, parseAbsolute("2025-01-01T00:00:00.000Z", 'UTC')]);
+    setStatusChangeDescriptions([...statusChangeDescriptions, ""]);
+    // Disabled fields
     setStatusChangeKeysDisabled([...statusChangeKeysDisabled, true]);
     setStatusChangeValuesDisabled([...statusChangeValuesDisabled, true]);
+    // Invalid fields
     setStatusChangeKeysInvalid([...statusChangeKeysInvalid, false]);
     setStatusChangeValuesInvalid([...statusChangeValuesDisabled, false]);
+    setStatusChangeTimeInvalid([...statusChangeTimeInvalid, false]);
   };
 
   const removeAllInvolvedEntities = () => {
+    // Values
     setInvolvedEntities([]);
     setStatusChangeKeys([]);
     setStatusChangeValues([]);
     setAvailableStatusChangeKeys([]);
+    setStatusChangeTime([]);
+    setStatusChangeDescriptions([]);
+    // Disabled fields
     setStatusChangeKeysDisabled([]);
     setStatusChangeValuesDisabled([]);
+    // Invalid fields
     setStatusChangeKeysInvalid([]);
     setStatusChangeValuesInvalid([]);
+    setStatusChangeTimeInvalid([]);
+  };
+
+  const removeOneStatusChangeByIndex = (indexToRemove: number) => {
+    // Values
+    setInvolvedEntities(involvedEntities.filter((_, index) => index !== indexToRemove));
+    setStatusChangeKeys(statusChangeKeys.filter((_, index) => index !== indexToRemove));
+    setStatusChangeValues(statusChangeValues.filter((_, index) => index !== indexToRemove));
+    setAvailableStatusChangeKeys(availableStatusChangeKeys.filter((_, index) => index !== indexToRemove));
+    setStatusChangeTime(statusChangeTime.filter((_, index) => index !== indexToRemove));
+    setStatusChangeDescriptions(statusChangeDescriptions.filter((_, index) => index !== indexToRemove));
+    // Disabled fields
+    setStatusChangeKeysDisabled(statusChangeKeysDisabled.filter((_, index) => index !== indexToRemove));
+    setStatusChangeValuesDisabled(statusChangeValuesDisabled.filter((_, index) => index !== indexToRemove));
+    // Invalid fields
+    setStatusChangeKeysInvalid(statusChangeKeysInvalid.filter((_, index) => index !== indexToRemove));
+    setStatusChangeValuesInvalid(statusChangeValuesDisabled.filter((_, index) => index !== indexToRemove));
+    setStatusChangeTimeInvalid(statusChangeTimeInvalid.filter((_, index) => index !== indexToRemove));
   };
 
   const onInvolvedEntitySelectionChange = (selectedEntityId: number, indexToChange: number) => {
@@ -101,10 +156,10 @@ const NewEventModal = ( props:  ModalProps ) => {
     setStatusChangeKeysDisabled(newStatusChangeKeysDisabled);
   };
 
-  const onStatusChangeKeysChange = (selectedEntityStatusKey: string, indexToChange: number) => {
+  const onStatusChangeKeysChange = (e: string, indexToChange: number) => {
     // Set selected entity's status key
     var newStatusChangeKeys = [...statusChangeKeys];
-    newStatusChangeKeys[indexToChange] = selectedEntityStatusKey;
+    newStatusChangeKeys[indexToChange] = e;
     setStatusChangeKeys(newStatusChangeKeys);
     // Enable the status value input
     var newStatusChangeValuesDisabled = [...statusChangeValuesDisabled];
@@ -113,15 +168,28 @@ const NewEventModal = ( props:  ModalProps ) => {
     // Set the new value to default text if it's empty string
     if (statusChangeValues[indexToChange] == "") {
       var newStatusChangeValues = [...statusChangeValues];
-      newStatusChangeValues[indexToChange] = "New status value"
+      newStatusChangeValues[indexToChange] = "New status value";
       setStatusChangeValues(newStatusChangeValues);
+      var newStatusChangeValuesInvalid = [...statusChangeValuesInvalid];
+      newStatusChangeValuesInvalid[indexToChange] = false;
+      setStatusChangeValuesInvalid(newStatusChangeValuesInvalid);
     }
+    // Check if inputEntityStatusKey is empty
+    var newStatusChangeKeysInvalid = [...statusChangeKeysInvalid]; 
+    if (e == "") {
+      newStatusChangeKeysInvalid[indexToChange] = true;
+    } else {
+      newStatusChangeKeysInvalid[indexToChange] = false;
+    }
+    setStatusChangeKeysInvalid(newStatusChangeKeysInvalid);
   };
 
   const onStatusChangeValuesChange = (e: any, indexToChange: number) => {
+    // Handle the value
     var newStatusChangeValues = [...statusChangeValues];
     newStatusChangeValues[indexToChange] = e.target.value;
     setStatusChangeValues(newStatusChangeValues);
+    // Check if valid
     var newStatusChangeValuesInvalid = [...statusChangeValuesInvalid];
     if (e.target.value == "") {
       newStatusChangeValuesInvalid[indexToChange] = true;
@@ -131,126 +199,56 @@ const NewEventModal = ( props:  ModalProps ) => {
     setStatusChangeValuesInvalid(newStatusChangeValuesInvalid);
   };
 
-
-  const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
-  const [newEventColor, setNewEventColor] = React.useState(getRandomColor());
-  const [newEntityStatusKeys, setNewEntityStatusKeys] = React.useState<string[]>([]);
-  const [newEntityStatusValues, setNewEntityStatusValues] = React.useState<string[]>([]);
-  const [newEntityStatusInvalidKeys, setNewEntityStatusInvalidKeys] = React.useState<boolean[]>([]);
-  const [newEntityStatusInvalidValues, setNewEntityStatusInvalidValues] = React.useState<boolean[]>([]);
-  const [duplicatedStatusKeys, setDuplicatedStatusKeys] = React.useState<boolean[]>([]);
-
-  // Functions
-  // Create the new entity
-  const createNewEntity = () => {
-    // Check if it's a new entity type:
-    // if (!projectState.entityTypes.includes(newEntityType)) {
-    //   addEntityType(newEntityType);
-    // }
-    // // create the new entity
-    // const newEntity = {
-    //   id: projectState.entityTrackingId,
-    //   type: newEntityType,
-    //   name: newEventName,
-    //   color: newEventColor,
-    //   status: {},
-    // } as Entity;
-    // // Add the status attributes use -1 as initial status
-    // newEntityStatusKeys.map((statusKey, index)=>{
-    //   newEntity.status[statusKey] = {};
-    //   newEntity.status[statusKey][-1] = ["INITIAL", newEntityStatusValues[index]];
-    // });
-    // addEntity(newEntity);
-    console.log(involvedEntities);
-  };
-
-  // Entity Name, type, and color
-  const onNewEntityNameChange = (e: any) => {
-    setNewEntityName(e.target.value);
-    if (e.target.value == "") {
-      setNewEntityNameInvalid(true);
+  const onStatusChangeTimeChange = (e: any, indexToChange: number) => {
+    // Handle the time
+    var newStatusChangeTime = [...statusChangeTime];
+    newStatusChangeTime[indexToChange] = e;
+    setStatusChangeTime(newStatusChangeTime);
+    var newStatusChangeTimeInvalid = [...statusChangeTimeInvalid];
+    if (e == null) {
+      newStatusChangeTimeInvalid[indexToChange] = true;
     } else {
-      setNewEntityNameInvalid(false);
+      newStatusChangeTimeInvalid[indexToChange] = false;
     }
-  };
-
-  const onNewEventSummaryChange = (e: any) => {
-    setNewEventSummary(e.target.value);
-  };
-
-  const onNewEventColorChange = (e: any) => {
-    setNewEventColor(e.target.value);
-  };
-
-  // Entity status
-  // Give a input array, return a array with same size where:
-  // each element is true/false depend if that element is duplicated on input array
-  const findDuplicates = (inputArray: Array<any>) => {
-    const valueIndex = new Map();
-    const duplicats = [];
-
-    for (let i = 0; i < inputArray.length; i++) {
-      if (valueIndex.has(inputArray[i])) {
-        if(valueIndex.get(inputArray[i]) !== -1){
-          duplicats[valueIndex.get(inputArray[i])] = true;
-          valueIndex.set(inputArray[i], -1);
-        }
-        duplicats.push(true);
-      } else {
-        valueIndex.set(inputArray[i], i);
-        duplicats.push(false);
-      }
-    }
-    return duplicats;
-  };
-
-  const addNewStatusInputs = () => {
-    const newKey = `${t("defaultEntityStatusKey")} ${newEntityStatusKeys.length + 1}`;
-    const newValue = `${t("defaultEntitystatusValue")} ${newEntityStatusValues.length + 1}`;
-    const newKeys = [...newEntityStatusKeys, newKey];
-    setNewEntityStatusKeys(newKeys);
-    setNewEntityStatusValues([...newEntityStatusValues, newValue]);
-    setNewEntityStatusInvalidKeys([...newEntityStatusInvalidKeys, false]);
-    setNewEntityStatusInvalidValues([...newEntityStatusInvalidValues, false]);
-    setDuplicatedStatusKeys(findDuplicates(newKeys));
-  };
-
-  const removeAllStatusInputs = () => {
-    setNewEntityStatusKeys([]);
-    setNewEntityStatusValues([]);
-    setNewEntityStatusInvalidKeys([]);
-    setNewEntityStatusInvalidValues([]);
-    setDuplicatedStatusKeys([]);
+    setStatusChangeTimeInvalid(newStatusChangeTimeInvalid);
   }
 
-  const removeOneStatusInputsByIndex = (indexToRemove: number) => {
-    const newKeys = newEntityStatusKeys.filter((_, index) => index !== indexToRemove);
-    setNewEntityStatusKeys(newKeys);
-    setNewEntityStatusValues(newEntityStatusValues.filter((_, index) => index !== indexToRemove));
-    setNewEntityStatusInvalidKeys(newEntityStatusInvalidKeys.filter((_, index) => index !== indexToRemove));
-    setNewEntityStatusInvalidValues(newEntityStatusInvalidValues.filter((_, index) => index !== indexToRemove));
-    setDuplicatedStatusKeys(findDuplicates(newKeys));
-  }
-
-  // Actual value change
-  const onNewEntityStatusKeyChange = (e: any, indexToEdit: number) => {
-    const newKeys = newEntityStatusKeys.map((item, idx) => (idx === indexToEdit ? e.target.value : item));
-    if (e.target.value == "") {
-      setNewEntityStatusInvalidKeys(newEntityStatusInvalidKeys.map((item, idx) => (idx === indexToEdit ? true : item)));
-    } else {
-      setNewEntityStatusInvalidKeys(newEntityStatusInvalidKeys.map((item, idx) => (idx === indexToEdit ? false : item)));
-    }
-    setNewEntityStatusKeys(newKeys);
-    setDuplicatedStatusKeys(findDuplicates(newKeys));
+  const onStatusChangeDescriptionsChange = (e: any, indexToChange: number) => {
+    // Handle the value
+    var newStatusChangeDescriptions = [...statusChangeDescriptions];
+    newStatusChangeDescriptions[indexToChange] = e.target.value;
+    setStatusChangeDescriptions(newStatusChangeDescriptions);
   };
 
-  const onNewEntityStatusValueChange = (e: any, indexToEdit: number) => {
-    setNewEntityStatusValues(newEntityStatusValues.map((item, idx) => (idx === indexToEdit ? e.target.value : item)));
-    if (e.target.value == "") {
-      setNewEntityStatusInvalidValues(newEntityStatusInvalidValues.map((item, idx) => (idx === indexToEdit ? true : item)));
-    } else {
-      setNewEntityStatusInvalidValues(newEntityStatusInvalidValues.map((item, idx) => (idx === indexToEdit ? false : item)));
-    }
+  // Actual Creation
+  const createNewEventWithStatusChange = () => {
+    const newEvent = {
+      id: projectState.eventTrackingId,
+      name: newEventName,
+      color: newEventColor,
+      startTime: getProjectTime(newEventStartTime),
+      endTime: getProjectTime(newEventEndTime),
+      summary: newEventSummary,
+      statusChanges: []
+    } as Event;
+
+    const currentStatusChangeTrackingId = projectState.statusChangeTrackingId
+    
+    involvedEntities.map((involvedEntityId, index)=>{
+      newEvent.statusChanges.push(currentStatusChangeTrackingId+index);
+      const newStatusChange = {
+        id: currentStatusChangeTrackingId+index,
+        eventId: involvedEntityId,
+        entityId: projectState.entityTrackingId,
+        time: getProjectTime(statusChangeTime[index]),
+        statusKey: statusChangeKeys[index],
+        statusValue: statusChangeValues[index],
+        description: statusChangeDescriptions[index],
+      } as StatusChange;
+      addStatusChange(newStatusChange);
+    });
+  
+    addEvent(newEvent);
   };
 
   return (
@@ -372,8 +370,6 @@ const NewEventModal = ( props:  ModalProps ) => {
                           onSelectionChange={(selectedKey)=>{
                             onInvolvedEntitySelectionChange(Number(selectedKey), index);
                           }}
-                          // isInvalid={newEntityTypeInvalid}
-                          // errorMessage={"Please choose a entity"}
                         >
                           {
                             Object.keys(projectState.entities).map(Number).map(
@@ -383,36 +379,62 @@ const NewEventModal = ( props:  ModalProps ) => {
                             )
                           }
                         </Autocomplete>
-                        <Autocomplete
-                          label={"Entity status key"}
-                          variant="underlined"
-                          isDisabled={statusChangeKeysDisabled[index]}
-                          onSelectionChange={(selectedKey)=>{
-                            onStatusChangeKeysChange(String(selectedKey), index);
-                          }}
+                        <Tooltip 
+                          showArrow={true}
+                          content={"Choose from existing status key or type to create new status key."}
                         >
-                          {
-                            availableStatusChangeKeys[index].map(
-                              (statusKey) => (
-                                <AutocompleteItem key={statusKey}>{statusKey}</AutocompleteItem>
+                          <Autocomplete
+                            isRequired
+                            allowsCustomValue
+                            label={"Entity status key"}
+                            variant="underlined"
+                            isDisabled={statusChangeKeysDisabled[index]}
+                            // Only show invalid when this filed is invalid and not disabled
+                            isInvalid={statusChangeKeysInvalid[index] && !statusChangeKeysDisabled[index]}
+                            onInputChange={(e)=>{
+                              onStatusChangeKeysChange(e, index)
+                            }}
+                          >
+                            {
+                              availableStatusChangeKeys[index].map(
+                                (statusKey) => (
+                                  <AutocompleteItem key={statusKey}>{statusKey}</AutocompleteItem>
+                                )
                               )
-                            )
-                          }
-                        </Autocomplete>
+                            }
+                          </Autocomplete>
+                        </Tooltip>
                         <Input
+                          isRequired
                           label={t("statusValueLabel")}
                           type="text"
                           variant="underlined"
                           isDisabled={statusChangeValuesDisabled[index]}
                           value={statusChangeValues[index]}
                           onChange={(e)=>{onStatusChangeValuesChange(e,index)}}
-                          isInvalid={statusChangeValuesInvalid[index]}
-                          errorMessage="Please enter the updated status value."
+                          // Only show invalid when this filed is invalid and not disabled
+                          isInvalid={statusChangeValuesInvalid[index] && !statusChangeValuesDisabled[index]}
                         />
+                        <Button 
+                          isIconOnly
+                          variant="light"
+                          color="danger"
+                          className="min-w-6 min-h-6 w-6 h-6"
+                          onPress={()=>{removeOneStatusChangeByIndex(index);}}
+                        >
+                          <DeleteIcon 
+                            width={20}
+                            height={20}
+                          />
+                        </Button>
                       </div>
                       <div className="flex gap-4 items-center">
                         <DatePicker
-                          className=""
+                          classNames={{
+                            base: "h-14 w-[13.5rem]",
+                            inputWrapper: "pb-0 h-14",
+                            helperWrapper: "p-0"
+                          }}
                           isRequired
                           hideTimeZone
                           showMonthAndYearPickers
@@ -420,24 +442,19 @@ const NewEventModal = ( props:  ModalProps ) => {
                           variant="underlined"
                           granularity="second"
                           hourCycle={24}
-                          onChange={onEndTimeChange}
-                          isInvalid={endDateInvalid}
-                          errorMessage={"End date is required"}
+                          value={statusChangeTime[index]}
+                          isInvalid={statusChangeTimeInvalid[index]}
+                          onChange={(e)=>{onStatusChangeTimeChange(e, index)}}
+                        />
+                        <Input
+                          className="w-[30rem]"
+                          label={"description"}
+                          variant="underlined"
+                          value={statusChangeDescriptions[index]}
+                          onChange={(e)=>{onStatusChangeDescriptionsChange(e,index)}}
                         />
                       </div>
                     </div>
-                    <Button 
-                      isIconOnly
-                      variant="light"
-                      color="danger"
-                      className="min-w-6 min-h-6 w-6 h-6"
-                      onPress={()=>{removeOneStatusInputsByIndex(index);}}
-                    >
-                      <DeleteIcon 
-                        width={20}
-                        height={20}
-                      />
-                    </Button>
                   </div>
                 ))}
               </div>
@@ -448,13 +465,16 @@ const NewEventModal = ( props:  ModalProps ) => {
               </Button>
               <Button 
                 color="primary" 
+                // Disable button if we have any invalid fields or any disabled fields
                 isDisabled={
-                  newEventNameInvalid ||
-                  newEntityStatusInvalidKeys.some(val => val === true) ||
-                  newEntityStatusInvalidValues.some(val => val === true) ||
-                  duplicatedStatusKeys.some(val => val === true)
+                  newEventNameInvalid || startDateInvalid || endDateInvalid ||
+                  statusChangeKeysInvalid.some(val => val === true) ||
+                  statusChangeValuesInvalid.some(val => val === true) ||
+                  statusChangeTimeInvalid.some(val => val === true) ||
+                  statusChangeKeysDisabled.some(val => val === true) ||
+                  statusChangeValuesDisabled.some(val => val === true)
                 }
-                onPress={()=>{createNewEntity();}}
+                onPress={()=>{createNewEventWithStatusChange();onClose()}}
               >
                 {t("createButton")}
               </Button>

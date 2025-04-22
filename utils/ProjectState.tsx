@@ -14,10 +14,11 @@ export interface Entity {
 export interface Event {
   id: number;
   name: string;
-  summary: string;
+  color: string;
   startTime: number;
   endTime: number;
-  statusChange: number[];
+  summary: string;
+  statusChanges: number[];
 }
 
 export interface StatusChange {
@@ -78,8 +79,8 @@ const instanceOfEntity = (object: any) => {
 
 const instanceOfEvent = (object: any) => {
   const entityCheck =
-    ("id" in object) && ("name" in object) && ("summary" in object) && 
-    ("startTime" in object) && ("endTime" in object) && ("statusChange" in object);
+    ("id" in object) && ("name" in object) && ("summary" in object) && ("color" in object) &&
+    ("startTime" in object) && ("endTime" in object) && ("statusChanges" in object);
   return entityCheck;
 };
 

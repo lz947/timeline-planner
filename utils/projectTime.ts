@@ -1,7 +1,10 @@
 import { parseAbsolute } from '@internationalized/date';
 import type { DateValue } from '@react-types/datepicker';
 
-export function getProjectTime(dateValue: DateValue): number {
+export function getProjectTime(dateValue: DateValue | null): number {
+  if (dateValue == null) {
+    return 0;
+  }
   const targetDate = dateValue.toDate('UTC');
 
   // Base date: Jan 01, 0000 at 00:00:00 UTC
