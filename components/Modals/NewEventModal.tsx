@@ -27,6 +27,20 @@ import { getProjectTime } from "@/utils/projectTime";
 
 const NewEventModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEventModal");
+
+  // Set the modal for new entity
+  const setModalForNewEvent = () => {
+    setNewEntityName(t("defaultNewEventName"));
+    setNewEventColor(getRandomColor());
+    setNewEventStartTime(parseAbsolute("2025-01-01T00:00:00.000Z", 'UTC'));
+    setNewEventEndTime(parseAbsolute("2025-01-01T12:00:00.000Z", 'UTC'));
+    setNewEventSummary(t("defaultNewEventSummary"));
+    setNewEntityNameInvalid(false);
+    setStartDateInvalid(false);
+    setEndDateInvalid(false);
+    removeAllInvolvedEntities();
+  };
+
   // States
   const { projectState, setProjectEntites, addEvent, addStatusChange } = useProjectState();
   // Event 
@@ -507,7 +521,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                   statusChangeKeysDisabled.some(val => val === true) ||
                   statusChangeValuesDisabled.some(val => val === true)
                 }
-                onPress={()=>{createNewEventWithStatusChange();onClose()}}
+                onPress={()=>{createNewEventWithStatusChange();onClose();setModalForNewEvent();}}
               >
                 {t("createButton")}
               </Button>

@@ -21,6 +21,17 @@ import { getRandomColor } from "@/utils/misc";
 
 const NewEntityModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
+
+  // Set the modal for new entity
+  const setModalForNewEntity = () => {
+    setNewEntityNameInvalid(false);
+    setNewEntityName(t("defaultEntityName"));
+    setNewEntityTypeInvalid(false);
+    setNewEntityType(t("defaultEntityType"));
+    setNewEntityColor(getRandomColor());
+    removeAllStatusInputs();
+  };
+
   // States
   // Entity
   const { projectState, addEntity, addEntityType, addStatusChange } = useProjectState();
@@ -40,6 +51,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
   // Create the new entity
   const createNewEntity = () => {
     // Check if it's a new entity type:
+    console.log(newEntityType);
     if (!projectState.entityTypes.includes(newEntityType)) {
       addEntityType(newEntityType);
     }
@@ -301,7 +313,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
                   newEntityStatusInvalidValues.some(val => val === true) ||
                   duplicatedStatusKeys.some(val => val === true)
                 }
-                onPress={()=>{createNewEntity();onClose();}}
+                onPress={()=>{createNewEntity();onClose();setModalForNewEntity();}}
               >
                 {t("createButton")}
               </Button>
