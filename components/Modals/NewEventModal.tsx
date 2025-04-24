@@ -16,7 +16,8 @@ import {
   AutocompleteItem,
   Tooltip,
   Textarea,
-  DatePicker
+  DatePicker,
+  Avatar
 } from "@heroui/react";
 import { Event, StatusChange, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
@@ -374,7 +375,18 @@ const NewEventModal = ( props:  ModalProps ) => {
                           {
                             Object.keys(projectState.entities).map(Number).map(
                               (entityId) => (
-                                <AutocompleteItem key={entityId}>{projectState.entities[entityId].name}</AutocompleteItem>
+                                <AutocompleteItem key={entityId} textValue={`${projectState.entities[entityId].type} - ${projectState.entities[entityId].name}`}>
+                                  <div className="flex gap-2 items-center">
+                                    <Avatar 
+                                      className="w-2 h-2"
+                                      style={{
+                                        backgroundColor:projectState.entities[entityId].color
+                                      }}
+                                      icon=""
+                                    />
+                                    <span>{projectState.entities[entityId].type} - {projectState.entities[entityId].name}</span>
+                                  </div>
+                                </AutocompleteItem>
                               )
                             )
                           }
