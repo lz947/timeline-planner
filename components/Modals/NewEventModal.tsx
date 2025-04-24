@@ -26,15 +26,15 @@ import { parseAbsolute } from "@internationalized/date";
 import { getProjectTime } from "@/utils/projectTime";
 
 const NewEventModal = ( props:  ModalProps ) => {
-  const t = useTranslations("NewEntityModal");
+  const t = useTranslations("NewEventModal");
   // States
   const { projectState, addEvent, addStatusChange } = useProjectState();
   // Event 
-  const [newEventName, setNewEntityName] = React.useState("New Event");
+  const [newEventName, setNewEntityName] = React.useState(t("defaultNewEventName"));
   const [newEventColor, setNewEventColor] = React.useState(getRandomColor());
   const [newEventStartTime, setNewEventStartTime] = React.useState<DateValue | null>(parseAbsolute("2025-01-01T00:00:00.000Z", 'UTC'));
   const [newEventEndTime, setNewEventEndTime] = React.useState<DateValue | null>(parseAbsolute("2025-01-01T12:00:00.000Z", 'UTC'));
-  const [newEventSummary, setNewEventSummary] = React.useState("New Event");
+  const [newEventSummary, setNewEventSummary] = React.useState(t("defaultNewEventSummary"));
   const [newEventNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [startDateInvalid, setStartDateInvalid] = React.useState(false);
   const [endDateInvalid, setEndDateInvalid] = React.useState(false);
@@ -169,7 +169,7 @@ const NewEventModal = ( props:  ModalProps ) => {
     // Set the new value to default text if it's empty string
     if (statusChangeValues[indexToChange] == "") {
       var newStatusChangeValues = [...statusChangeValues];
-      newStatusChangeValues[indexToChange] = "New status value";
+      newStatusChangeValues[indexToChange] = t("defaultNewStatusValue");
       setStatusChangeValues(newStatusChangeValues);
       var newStatusChangeValuesInvalid = [...statusChangeValuesInvalid];
       newStatusChangeValuesInvalid[indexToChange] = false;
@@ -260,7 +260,7 @@ const NewEventModal = ( props:  ModalProps ) => {
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">New Event</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">{t("header")}</ModalHeader>
             <ModalBody>
               <div 
                 className="flex gap-4 items-center"
@@ -271,13 +271,13 @@ const NewEventModal = ( props:  ModalProps ) => {
                   >
                     <Input
                       isRequired
-                      label={"Event Name"}
+                      label={t("eventNameInputLabel")}
                       type="text"
                       variant="underlined"
                       value={newEventName}
                       onChange={onNewEntityNameChange}
                       isInvalid={newEventNameInvalid}
-                      errorMessage={"Event name is required"}
+                      errorMessage={t("eventNameInputError")}
                     />
                     <Input
                       type="color"
@@ -296,32 +296,32 @@ const NewEventModal = ( props:  ModalProps ) => {
                     isRequired
                     hideTimeZone
                     showMonthAndYearPickers
-                    label="Event Start Date"
+                    label={t("eventStartTimeLabel")}
                     variant="underlined"
                     granularity="second"
                     hourCycle={24}
                     value={newEventStartTime}
                     onChange={onStartTimeChange}
                     isInvalid={startDateInvalid}
-                    errorMessage={"Start date is required"}
+                    errorMessage={t("eventStartTimeError")}
                   />
                   <DatePicker
                     isRequired
                     hideTimeZone
                     showMonthAndYearPickers
-                    label="Event End Date"
+                    label={t("eventEndTimeLabel")}
                     variant="underlined"
                     granularity="second"
                     hourCycle={24}
                     value={newEventEndTime}
                     onChange={onEndTimeChange}
                     isInvalid={endDateInvalid}
-                    errorMessage={"End date is required"}
+                    errorMessage={t("eventEndTimeError")}
                   />
                 </div>
                 <Textarea
                   variant="underlined"
-                  label="Summary"
+                  label={t("eventSummaryLabel")}
                   minRows={3}
                   maxRows={6}
                   value={newEventSummary}
@@ -333,19 +333,19 @@ const NewEventModal = ( props:  ModalProps ) => {
               >
                 <Tooltip 
                   showArrow={true}
-                  content={"Click to add a entity that is involved in this event."}
+                  content={t("addInvolvedEntityTooltip")}
                 >
                   <Button
                     variant="bordered"
                     size="sm"
                     className="max-w-32"
                     onPress={addNewInvolvedEntity}
-                  >Add involved entity</Button>
+                  >{t("addInvolvedEntityButton")}</Button>
                 </Tooltip>
                 <Tooltip
                   color="danger"
                   showArrow={true}
-                  content={"Click to remove all involved entities."}
+                  content={t("removeAllInvolvedEntityTooltip")}
                 >
                   <Button
                     variant="bordered"
@@ -353,7 +353,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                     className="max-w-32"
                     color="danger"
                     onPress={removeAllInvolvedEntities}
-                  >Remove all entities</Button>
+                  >{t("removeAllInvolvedEntityButton")}</Button>
                 </Tooltip>
               </div>
               <div>
@@ -366,7 +366,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                       <div className="flex gap-4 items-center">
                         <Autocomplete
                           isRequired
-                          label={"Involved entity"}
+                          label={t("involvedEntityLabel")}
                           variant="underlined"
                           onSelectionChange={(selectedKey)=>{
                             onInvolvedEntitySelectionChange(Number(selectedKey), index);
@@ -393,12 +393,12 @@ const NewEventModal = ( props:  ModalProps ) => {
                         </Autocomplete>
                         <Tooltip 
                           showArrow={true}
-                          content={"Choose from existing status key or type to create new status key."}
+                          content={t("involvedEntityStatusKeyTooltip")}
                         >
                           <Autocomplete
                             isRequired
                             allowsCustomValue
-                            label={"Entity status key"}
+                            label={t("involvedEntityStatusKeyLabel")}
                             variant="underlined"
                             isDisabled={statusChangeKeysDisabled[index]}
                             // Only show invalid when this filed is invalid and not disabled
@@ -418,7 +418,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                         </Tooltip>
                         <Input
                           isRequired
-                          label={t("statusValueLabel")}
+                          label={t("involvedEntityNewStatusValueLabel")}
                           type="text"
                           variant="underlined"
                           isDisabled={statusChangeValuesDisabled[index]}
@@ -450,7 +450,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                           isRequired
                           hideTimeZone
                           showMonthAndYearPickers
-                          label="Event End Date"
+                          label={t("involvedEntityTimeLabel")}
                           variant="underlined"
                           granularity="second"
                           hourCycle={24}
@@ -460,7 +460,7 @@ const NewEventModal = ( props:  ModalProps ) => {
                         />
                         <Input
                           className="w-[30rem]"
-                          label={"description"}
+                          label={t("involvedEntityDescription")}
                           variant="underlined"
                           value={statusChangeDescriptions[index]}
                           onChange={(e)=>{onStatusChangeDescriptionsChange(e,index)}}
