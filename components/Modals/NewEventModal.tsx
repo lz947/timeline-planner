@@ -28,7 +28,7 @@ import { getProjectTime } from "@/utils/projectTime";
 const NewEventModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEventModal");
   // States
-  const { projectState, addEvent, addStatusChange } = useProjectState();
+  const { projectState, setProjectEntites, addEvent, addStatusChange } = useProjectState();
   // Event 
   const [newEventName, setNewEntityName] = React.useState(t("defaultNewEventName"));
   const [newEventColor, setNewEventColor] = React.useState(getRandomColor());
@@ -233,9 +233,20 @@ const NewEventModal = ( props:  ModalProps ) => {
       statusChanges: []
     } as Event;
 
-    const currentStatusChangeTrackingId = projectState.statusChangeTrackingId
+    const currentStatusChangeTrackingId = projectState.statusChangeTrackingId;
+
+    var updateEntityStatusKeys: Record<number,Set<string>> = {};
     
     involvedEntities.map((involvedEntityId, index)=>{
+      // Check if we added new statusKey for entity
+      // Collect all of them and process once and only use one state hook per entity
+      if (!projectState.entities[involvedEntityId].statusKeys.includes(statusChangeKeys[index])) {
+        if (involvedEntityId in updateEntityStatusKeys) {
+          updateEntityStatusKeys[involvedEntityId].add(statusChangeKeys[index]);
+        } else {
+          updateEntityStatusKeys[involvedEntityId] = new Set();
+        }
+      }
       newEvent.statusChanges.push(currentStatusChangeTrackingId+index);
       const newStatusChange = {
         id: currentStatusChangeTrackingId+index,
@@ -248,7 +259,17 @@ const NewEventModal = ( props:  ModalProps ) => {
       } as StatusChange;
       addStatusChange(newStatusChange);
     });
-  
+
+    var newProjectStateEntities = structuredClone(projectState.entities);
+
+    for (const entityIdToUpdateStatusKey in updateEntityStatusKeys) {
+      updateEntityStatusKeys[entityIdToUpdateStatusKey].forEach(newStatusKey => {
+        newProjectStateEntities[entityIdToUpdateStatusKey].statusKeys.push(newStatusKey);
+      });
+    }
+    setProjectEntites(newProjectStateEntities);
+
+    // Finally add the new event
     addEvent(newEvent);
   };
 
