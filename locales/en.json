@@ -8,8 +8,10 @@
     "entityPageLink": "Entities",
     "chapterPageLink": "Chapters",
     "eventPageLink": "Events",
-    "entityOverview": "Overview",
-    "createNewEntity": "Create new entity"
+    "entityOverview": "Entity overview",
+    "createNewEntity": "Create new entity",
+    "eventOverview": "Event overview",
+    "createNewEvent": "Create new event"
   },
   "NewProjectModal": {
     "defaultProjectName": "New Project",
@@ -52,6 +54,31 @@
     "statusKeyError": "Status key is empty or duplicated.",
     "statusValueLabel": "Status Value",
     "statusValueError": "Status value is empty.",
+    "closeButton": "Close",
+    "createButton": "Create"
+  },
+  "NewEventModal": {
+    "defaultNewEventName": "New Event",
+    "defaultNewEventSummary": "This is a new event.",
+    "defaultNewStatusValue": "New Status Value",
+    "header": "New Event",
+    "eventNameInputLabel": "Event Name",
+    "eventNameInputError": "Event name is required",
+    "eventStartTimeLabel": "Event Start Time",
+    "eventStartTimeError": "Start date is required",
+    "eventEndTimeLabel": "Event End Time",
+    "eventEndTimeError": "End date is required",
+    "eventSummaryLabel": "Summary",
+    "addInvolvedEntityTooltip": "Click to add a entity that is involved in this event.",
+    "addInvolvedEntityButton": "Add involved entity",
+    "removeAllInvolvedEntityTooltip": "Click to remove all involved entities.",
+    "removeAllInvolvedEntityButton": "Remove all entities",
+    "involvedEntityLabel": "Involved entity",
+    "involvedEntityStatusKeyTooltip": "Choose from existing status key or type to create new status key.",
+    "involvedEntityStatusKeyLabel": "Entity status key",
+    "involvedEntityNewStatusValueLabel": "New Status Value",
+    "involvedEntityTimeLabel": "Status Change Time",
+    "involvedEntityDescription": "Status Change Description",
     "closeButton": "Close",
     "createButton": "Create"
   }

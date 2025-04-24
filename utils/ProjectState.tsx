@@ -7,16 +7,28 @@ export interface Entity {
   type: string;
   name: string;
   color: string;
-  status: Record<string, Record<number, string[]>>;
+  statusKeys: string[];
+  statusChanges: number[];
 }
 
 export interface Event {
   id: number;
   name: string;
+  color: string;
+  startTime: number;
+  endTime: number;
   summary: string;
-  startTime: string;
-  endTime: string;
-  involvedEntities: Record<number,string>;
+  statusChanges: number[];
+}
+
+export interface StatusChange {
+  id: number;
+  eventId: number;
+  entityId: number;
+  time: number;
+  statusKey: string;
+  statusValue: String;
+  description: string;
 }
 
 export interface Chapter {
@@ -34,6 +46,8 @@ export interface ProjectState {
   entityTypes: Array<string>;
   eventTrackingId: number;
   events: Record<number, Event>;
+  statusChangeTrackingId: number;
+  statusChanges: Record<number, StatusChange>;
   chapterTrackingId: number;
   chapters: Record<number, Chapter>;
 }
@@ -49,22 +63,32 @@ export const createNewProjectState = (newProjectName: string) => {
     eventTrackingId: 0,
     events: {},
     chapterTrackingId: 0,
-    chapters: {}
+    chapters: {},
+    statusChangeTrackingId: 0,
+    statusChanges: {}
   } as ProjectState;
 }
 
 // Verify if a object is project
 const instanceOfEntity = (object: any) => {
   const entityCheck =
-    ("id" in object) && ("type" in object) && 
-    ("name" in object) && ("status" in object) && ("color" in object);
+    ("id" in object) && ("type" in object) && ("color" in object) &&
+    ("name" in object) && ("statusKeys" in object) && ("statusChanges" in object);
   return entityCheck;
 };
 
 const instanceOfEvent = (object: any) => {
   const entityCheck =
-    ("id" in object) && ("name" in object) && ("summary" in object) && 
-    ("startTime" in object) && ("endTime" in object) && ("involvedEntities" in object);
+    ("id" in object) && ("name" in object) && ("summary" in object) && ("color" in object) &&
+    ("startTime" in object) && ("endTime" in object) && ("statusChanges" in object);
+  return entityCheck;
+};
+
+const instanceOfStatusChange = (object: any) => {
+  const entityCheck =
+    ("id" in object) && ("eventId" in object) && ("entityId" in object) && 
+    ("time" in object) && ("statusKey" in object) && ("statusValue" in object) && 
+    ("description" in object);
   return entityCheck;
 };
 
@@ -80,6 +104,7 @@ export const instanceOfProjectState = (object: any) => {
     ("projectName" in object) && ("editingMode" in object) && 
     ("entityTrackingId" in object) && ("entities" in object) && ("entityTypes" in object) &&
     ("eventTrackingId" in object) && ("events" in object) && 
+    ("statusChangeTrackingId" in object) && ("statusChanges" in object) && 
     ("chapterTrackingId" in object) && ("chapters" in object);
 
   for (var entity in object.entities) {
@@ -90,6 +115,12 @@ export const instanceOfProjectState = (object: any) => {
 
   for (var event in object.events) {
     if (!instanceOfEvent(object.events[event])) {
+      return false;
+    }
+  }
+
+  for (var statusChange in object.statusChanges) {
+    if (!instanceOfStatusChange(object.statusChanges[statusChange])) {
       return false;
     }
   }
@@ -119,6 +150,10 @@ interface ProjectStateContextType {
   addEvent: (newEvent: Event) => void;
   editEvent: (id: number, newEvent: Event) => void;
   deleteEvent: (id: number) => void;
+  setProjectStatusChanges: (newProjectStatusChanges: Record<number, StatusChange>) => void;
+  addStatusChange: (newStatusChange: StatusChange) => void;
+  editStatusChange: (id: number, newStatusChange: StatusChange) => void;
+  deleteStatusChange: (id: number) => void;
   setProjectChapter: (newProjectChapter: Record<number, Chapter>) => void;
   addChapter: (newChapter: Chapter) => void;
   editChapter: (id: number, newChapter: Chapter) => void;
@@ -139,7 +174,9 @@ export const StateProvider = ({ children } : { children:any }) => {
     eventTrackingId: 0,
     events: {},
     chapterTrackingId: 0,
-    chapters: {}
+    chapters: {},
+    statusChangeTrackingId: 0,
+    statusChanges: {}
   });
 
   const setProjectName = (newProjectName: string) => {
@@ -254,6 +291,44 @@ export const StateProvider = ({ children } : { children:any }) => {
     });
   };
 
+  // Status Change
+  const setProjectStatusChanges = (newProjectStatusChanges: Record<number, StatusChange>) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      statusChanges: newProjectStatusChanges,
+    }));
+  };
+
+  const addStatusChange = (newStatusChange: StatusChange) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      statusChangeTrackingId: prevState.statusChangeTrackingId + 1,
+      statusChanges: {
+        ...prevState.statusChanges,
+        [prevState.statusChangeTrackingId]: newStatusChange,
+      },
+    }));
+  };
+
+  const editStatusChange = (id: number, newStatusChange: StatusChange) => {
+    setProjectState((prevState) => ({
+      ...prevState,
+      statusChanges: {
+        ...prevState.statusChanges,
+        [id]: newStatusChange,
+      },
+    }));
+  };
+
+  const deleteStatusChange = (id: number) => {
+    setProjectState((prevState) => {
+      const newStatusChanges = { ...prevState.statusChanges };
+      delete newStatusChanges[id];
+
+      return { ...prevState, statusChanges: newStatusChanges };
+    });
+  };
+
   // Chapter
   const setProjectChapter = (newProjectChapters: Record<number, Chapter>) => {
     setProjectState((prevState) => ({
@@ -300,6 +375,7 @@ export const StateProvider = ({ children } : { children:any }) => {
         setProjectEntites, addEntity, editEntity, deleteEntity,
         setEntityTypes, addEntityType, deleteEntityType,
         setProjectEvents, addEvent, editEvent, deleteEvent,
+        setProjectStatusChanges, addStatusChange, editStatusChange, deleteStatusChange,
         setProjectChapter, addChapter, editChapter, deleteChapter,
       }}
     >

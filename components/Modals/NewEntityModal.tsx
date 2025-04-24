@@ -15,19 +15,32 @@ import {
   AutocompleteItem,
   Tooltip
 } from "@heroui/react";
-import { Entity, useProjectState } from "@/utils/ProjectState";
+import { Entity, StatusChange, useProjectState } from "@/utils/ProjectState";
 import { DeleteIcon } from "@/public/icons/DeleteIcon";
 import { getRandomColor } from "@/utils/misc";
 
 const NewEntityModal = ( props:  ModalProps ) => {
   const t = useTranslations("NewEntityModal");
+
+  // Set the modal for new entity
+  const setModalForNewEntity = () => {
+    setNewEntityNameInvalid(false);
+    setNewEntityName(t("defaultEntityName"));
+    setNewEntityTypeInvalid(false);
+    setNewEntityType(t("defaultEntityType"));
+    setNewEntityColor(getRandomColor());
+    removeAllStatusInputs();
+  };
+
   // States
-  const { projectState, addEntity, addEntityType } = useProjectState();
+  // Entity
+  const { projectState, addEntity, addEntityType, addStatusChange } = useProjectState();
   const [newEntityNameInvalid, setNewEntityNameInvalid] = React.useState(false);
   const [newEntityName, setNewEntityName] = React.useState(t("defaultEntityName"));
   const [newEntityTypeInvalid, setNewEntityTypeInvalid] = React.useState(false);
   const [newEntityType, setNewEntityType] = React.useState(t("defaultEntityType"));
   const [newEntityColor, setNewEntityColor] = React.useState(getRandomColor());
+  // StatusChanges
   const [newEntityStatusKeys, setNewEntityStatusKeys] = React.useState<string[]>([]);
   const [newEntityStatusValues, setNewEntityStatusValues] = React.useState<string[]>([]);
   const [newEntityStatusInvalidKeys, setNewEntityStatusInvalidKeys] = React.useState<boolean[]>([]);
@@ -38,6 +51,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
   // Create the new entity
   const createNewEntity = () => {
     // Check if it's a new entity type:
+    console.log(newEntityType);
     if (!projectState.entityTypes.includes(newEntityType)) {
       addEntityType(newEntityType);
     }
@@ -47,12 +61,24 @@ const NewEntityModal = ( props:  ModalProps ) => {
       type: newEntityType,
       name: newEntityName,
       color: newEntityColor,
-      status: {},
+      statusKeys: [],
+      statusChanges: []
     } as Entity;
-    // Add the status attributes use -1 as initial status
+    // Add the statusChanges one by one, and -1 for initial time
+    const currentStatusChangeTrackingId = projectState.statusChangeTrackingId
     newEntityStatusKeys.map((statusKey, index)=>{
-      newEntity.status[statusKey] = {};
-      newEntity.status[statusKey][-1] = ["INITIAL", newEntityStatusValues[index]];
+      newEntity.statusKeys.push(statusKey);
+      newEntity.statusChanges.push(currentStatusChangeTrackingId+index);
+      const newStatusChange = {
+        id: currentStatusChangeTrackingId+index,
+        eventId: -1,
+        entityId: projectState.entityTrackingId,
+        time: -1,
+        statusKey: statusKey,
+        statusValue: newEntityStatusValues[index],
+        description: "INITIAL",
+      } as StatusChange;
+      addStatusChange(newStatusChange);
     });
     addEntity(newEntity);
   };
@@ -78,7 +104,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
 
   const onNewEntityColorChange = (e: any) => {
     setNewEntityColor(e.target.value);
-  }
+  };
 
   // Entity status
   // Give a input array, return a array with same size where:
@@ -161,37 +187,19 @@ const NewEntityModal = ( props:  ModalProps ) => {
           <>
             <ModalHeader className="flex flex-col gap-1">{t("header")}</ModalHeader>
             <ModalBody>
-              <Input
-                isRequired
-                label={t("entityNameInputLabel")}
-                type="text"
-                variant="underlined"
-                value={newEntityName}
-                onChange={onNewEntityNameChange}
-                isInvalid={newEntityNameInvalid}
-                errorMessage={t("entityNameInputError")}
-              />
               <div 
                 className="flex gap-4 items-center"
               >
-                <Autocomplete
+                <Input
                   isRequired
-                  label={t("entityTypeInputLabel")}
+                  label={t("entityNameInputLabel")}
+                  type="text"
                   variant="underlined"
-                  inputValue={newEntityType}
-                  onInputChange={onNewEntityTypeChange}
-                  isInvalid={newEntityTypeInvalid}
-                  errorMessage={t("entityTypeInputError")}
-                  allowsCustomValue
-                >
-                  {
-                    projectState.entityTypes.map(
-                      (entityType, index) => (
-                        <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
-                      )
-                    )
-                  }
-                </Autocomplete>
+                  value={newEntityName}
+                  onChange={onNewEntityNameChange}
+                  isInvalid={newEntityNameInvalid}
+                  errorMessage={t("entityNameInputError")}
+                />
                 <Input
                   type="color"
                   onChange={onNewEntityColorChange}
@@ -205,6 +213,24 @@ const NewEntityModal = ( props:  ModalProps ) => {
                   radius="full"
                 />
               </div>
+              <Autocomplete
+                isRequired
+                label={t("entityTypeInputLabel")}
+                variant="underlined"
+                inputValue={newEntityType}
+                onInputChange={onNewEntityTypeChange}
+                isInvalid={newEntityTypeInvalid}
+                errorMessage={t("entityTypeInputError")}
+                allowsCustomValue
+              >
+                {
+                  projectState.entityTypes.map(
+                    (entityType, index) => (
+                      <AutocompleteItem key={index}>{entityType}</AutocompleteItem>
+                    )
+                  )
+                }
+              </Autocomplete>
               <div 
                 className="flex gap-4 items-center"
               >
@@ -287,7 +313,7 @@ const NewEntityModal = ( props:  ModalProps ) => {
                   newEntityStatusInvalidValues.some(val => val === true) ||
                   duplicatedStatusKeys.some(val => val === true)
                 }
-                onPress={()=>{createNewEntity();onClose();}}
+                onPress={()=>{createNewEntity();onClose();setModalForNewEntity();}}
               >
                 {t("createButton")}
               </Button>

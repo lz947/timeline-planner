@@ -9,7 +9,9 @@
     "chapterPageLink": "章节",
     "eventPageLink": "事件",
     "entityOverview": "实体总览",
-    "createNewEntity": "创建新实体"
+    "createNewEntity": "创建新实体",
+    "eventOverview": "事件总览",
+    "createNewEvent": "创建新事件"
   },
   "NewProjectModal": {
     "defaultProjectName": "新项目",
@@ -52,6 +54,31 @@
     "statusKeyError": "状态种类不可为空/重复",
     "statusValueLabel": "状态值",
     "statusValueError": "状态值名称不可为空",
+    "closeButton": "关闭",
+    "createButton": "创建"
+  },
+  "NewEventModal": {
+    "defaultNewEventName": "新建事件",
+    "defaultNewEventSummary": "这是新事件的简介.",
+    "defaultNewStatusValue": "新状态值",
+    "header": "新事件",
+    "eventNameInputLabel": "事件名称",
+    "eventNameInputError": "事件名称不可为空",
+    "eventStartTimeLabel": "事件开始时间",
+    "eventStartTimeError": "事件开始时间不可为空",
+    "eventEndTimeLabel": "事件结束时间",
+    "eventEndTimeError": "事件结束时间不可为空",
+    "eventSummaryLabel": "简介",
+    "addInvolvedEntityTooltip": "点击添加一个参与此事件的实体",
+    "addInvolvedEntityButton": "添加参与实体",
+    "removeAllInvolvedEntityTooltip": "点击移除全部参与事件的实体",
+    "removeAllInvolvedEntityButton": "删除全部实体",
+    "involvedEntityLabel": "参与实体",
+    "involvedEntityStatusKeyTooltip": "选择参与实体的状态种类或者输入新的状态种类",
+    "involvedEntityStatusKeyLabel": "实体状态种类",
+    "involvedEntityNewStatusValueLabel": "新实体状态值",
+    "involvedEntityTimeLabel": "状态变更时间",
+    "involvedEntityDescription": "状态变更简介",
     "closeButton": "关闭",
     "createButton": "创建"
   }
