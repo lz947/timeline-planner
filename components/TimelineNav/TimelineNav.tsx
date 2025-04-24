@@ -274,13 +274,13 @@ const TimelineNav = ( props: NavbarProps ) => {
                 key="eventOverview"
                 onPress={()=>{router.push("/events")}}
               >
-                Event overview
+                {t("eventOverview")}
               </DropdownItem>
               <DropdownItem
                 key="entityCreate"
                 onPress={onNewEventModalOpen}
               >
-                Create new event
+                {t("createNewEvent")}
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
